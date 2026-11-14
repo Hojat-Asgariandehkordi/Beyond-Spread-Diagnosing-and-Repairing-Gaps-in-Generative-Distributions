@@ -1,15 +1,10 @@
 \section{Experiments}
 \label{sec:experiments}
-A few terms recur. An \emph{arm} is one generator configuration in a
-study, and a \emph{panel} is an independent set of generated images
-drawn with its own noise seeds. A \emph{probe} is a sampler used only to
-measure a checkpoint, and a \emph{resolved probe} is a longer sampler that
-passes its fidelity gates. A \emph{gate} is a pass/fail/unresolved check
-against a declared margin, such as the support gate of
-Sec.~\ref{sec:support} or a precision, alignment, or preference floor.
-A comparison is \emph{frozen} when it is fixed before outcome samples are
-drawn, and a decision is \emph{unresolved} when its interval overlaps the
-margin.
+An \emph{arm} is a generator configuration; a \emph{panel} is an
+independently generated sample set. A \emph{resolved probe} is a longer
+sampler that passes its fidelity gates. Gates compare intervals with
+declared margins and return pass, fail, or unresolved. Comparisons are
+\emph{frozen} before outcome sampling.
 
 \subsection{Datasets}
 \label{sec:datasets}
@@ -40,66 +35,55 @@ measurements; prompts supply no real-image coverage target.
 
 \subsection{Experimental settings}
 \label{sec:settings}
-Diffusion samplers evaluate the denoiser on a grid of timesteps. Leading
-spacing places the grid at multiples of the schedule length divided by the
-number of calls, so the two-call grid starts at $t_0=500$; trailing
-spacing starts at the final timestep. On CIFAR-10, the original study
-compared 22 sampler and initialization configurations (arms) at two, four,
-and eight calls, using a 2,048-image pilot and 10,000 fresh images per arm. An ablation on its paired seeds motivated a separate
-six-arm confirmation (the arms of Fig.~\ref{fig:cifar_initializer}a) on
-five fresh paired panels of 2,000 images from the
-same checkpoint. Uncertainty is over generated panels and conditions on
-the fixed real-data reference (Supp.~Sec.~F.3). At four and eight calls,
-matched-grid controls hold trailing timesteps fixed, and covariance-aware
-sampling is charged for both forward and Jacobian--vector-product calls.
-All eight EDM arms share 2,048 noise inputs; Heun uses $2K-1$ calls for
-$K$ integration steps.
+Leading timestep spacing starts the two-call CIFAR-10 grid at $t_0=500$;
+trailing spacing starts at the final timestep. We evaluate 22 sampler
+and initialization arms at two, four, and eight calls, using a
+2,048-image pilot and 10,000 fresh images per arm. A separate six-arm
+confirmation uses five fresh paired panels of 2,000 images
+(Fig.~\ref{fig:cifar_initializer}a). At four and eight calls, matched-grid
+controls share trailing timesteps. Covariance-aware sampling is charged
+for forward and Jacobian--vector-product calls. All eight EDM arms share
+2,048 noise inputs; Heun uses $2K-1$ calls for $K$ integration steps.
 
-The original MNIST comparison spans three training seeds, five training
-states, and eleven samplers (165 evaluations); its paired restoration
-contrast uses the frozen three-comparison adjustment. The follow-up
-compares 8,000 ordinary-data and 8,000 continued-targeting updates from
-identical model, optimizer, EMA, and random states. Each arm receives
-16,000 diagnosis and 2,000 independent outcome samples. The crossed
-probes combine two short samplers and three resolved probes, longer
-samplers that pass their fidelity gates, with five MNIST
-training states and three seeds (Supp.~Secs.~H.3--H.4). Each short sampler
-is compared with a 25-call reference from the same checkpoint, and a
-training test also requires the same real-data-relative deficit to persist
-under all three resolved probes, each passing its fidelity gates. The
-recommendations were frozen before outcome generation. The CIFAR-10
-semantic check uses one adaptation seed and 3,000 matched updates.
+MNIST combines three training seeds, five training states, and eleven
+samplers (165 evaluations). The restoration contrast uses the frozen
+three-comparison adjustment. The follow-up compares 8,000 ordinary-data
+and 8,000 continued-targeting updates from identical model, optimizer,
+EMA, and random states, with 16,000 diagnosis and 2,000 independent
+outcome samples per arm. Crossed probes pair two short samplers with
+three fidelity-qualified longer samplers across five training states
+and three seeds (Supp.~Secs.~H.3--H.4). Each short sampler uses a
+same-checkpoint 25-call reference; training recommendations require a
+real-data deficit under all three qualified probes and are frozen before
+outcome sampling. The CIFAR-10 semantic check uses one adaptation seed
+and 3,000 matched updates.
 
-For text-to-image generation, each prompt receives eight diagnosis and 16
-separate outcome seeds. The complete matrix retains 29 SD and seven Sana
-configurations, including step and guidance changes, stochastic sampling,
-conditioning noise, and first-base-step LCM. Native schedules and
-checkpoint conversions are checked against released implementations.
-Prompt-level resampling keeps each prompt's candidate/reference pairing
-intact and treats its seeds as within-prompt observations.
+Text-to-image experiments use eight diagnosis and 16 independent outcome
+seeds per prompt across 29 SD and seven Sana configurations. These cover
+steps, guidance, stochastic sampling, conditioning noise, and
+first-base-step LCM. Native schedules and checkpoint conversions are
+checked against released implementations. Resampling preserves whole
+matched prompts and their within-prompt seeds.
 
 \subsection{Baselines}
 \label{sec:baselines}
 On CIFAR-10, the covariance start is compared with the standard start
-under leading and trailing DDIM grids, and with DPM++ and UniPC at the
-same call budget~\cite{song2021ddim,lu2022dpmpp,zhao2023unipc}. Two
-alternative interventions isolate where the change acts: full-moment
-initialization, which also matches the mean, and output covariance
-restoration, which restores the covariance of the generated images.
-We also test covariance-aware sampling~\cite{schioppa2026covariance}. On the EDM checkpoint we compare Euler and Heun integration.
-On MNIST, ordinary continuation (training on the full data) is compared
-with continued targeting (keeping the restored digit's doubled training weight)
-from the same parent, with the full-data model as the fidelity control;
-the CIFAR-10 semantic check adds event-ratio weighting. For regional
-detection, we compare the depletion certificate with the
-number-of-statistically-different-bins (NDB) test~\cite{richardson2018ndb}
-and two projected rules. For sampler selection, we compare with leading
-DDIM, Vendi, and teacher-feature Fr\'echet selection~\cite{heusel2017gans} on CIFAR-10, and with
-quality plus Vendi, fixed Sana DPM++8, a 20-call fallback, and
-CADS~\cite{sadat2024cads} in text-to-image generation. We do not use
-precision, recall, or Vendi as alternatives to the certificate, because
-they do not return a regional effect-size decision; they serve as fidelity
-and selection controls instead.
+under leading and trailing DDIM grids, and with DPM++ and UniPC at
+matched call budgets
+\cite{song2021ddim,lu2022dpmpp,zhao2023unipc}. Full-moment initialization
+(also matching the mean) and output covariance restoration isolate the
+intervention's location; covariance-aware sampling provides a further
+control~\cite{schioppa2026covariance}. EDM compares Euler and Heun.
+MNIST compares ordinary continuation with continued targeting
+(doubled restored-digit weight) from the same parent, using the full-data
+model as fidelity control; the CIFAR-10 semantic check adds event-ratio
+weighting. Regional detection compares the certificate with
+NDB~\cite{richardson2018ndb} and two projected rules.
+Selection baselines are leading DDIM, Vendi, and teacher-feature
+Fr\'echet selection~\cite{heusel2017gans} on CIFAR-10, and quality plus
+Vendi, Sana DPM++8, a 20-call fallback, and
+CADS~\cite{sadat2024cads} for text-to-image generation.
+Global metrics serve as fidelity and selection controls.
 
 \subsection{Evaluation metrics}
 \label{sec:metrics}
@@ -114,20 +98,14 @@ when rejection is included. Spread is the trace ratio of
 \cref{eq:spread}. In text-to-image generation, PickScore~\cite{kirstain2023pickapic}
 and ImageReward~\cite{xu2023imagereward} measure learned preference. A frequency-range check
 counts images within the real-training 1--99\% frequency range
-(Supp.~Sec.~G.1).
-
-We write a paired difference as $\Delta\,[\ell,u]$, where $\Delta$ is the
-mean difference between repair and control and $[\ell,u]$ its interval.
-CIFAR-10 intervals are Student-$t$ over five generated panels, with
-nominal 95\% simultaneous coverage across the five prespecified contrasts
-of the fresh confirmation under the panel-effect approximation; the
-CIFAR-10.1 re-evaluation uses its own family of four contrasts. MNIST intervals are 97.5\% paired
-Student-$t$ intervals over three training seeds, one for each of two
-prespecified outcomes. Intervals labelled ordinary or descriptive are
-unadjusted paired 95\% intervals. Text-to-image intervals resample whole
-prompts, and detection rates use exact binomial intervals. All intervals
-condition on the fixed evaluation references. Proposition~1 and the
-support gate are exact finite-sample guarantees. The spread intervals and
-the Student-$t$ intervals over panels or seeds are approximate, and they
-capture sampling variability for a fixed checkpoint or training recipe,
-not variation across independently pretrained models.
+(Supp.~Sec.~G.1). A paired result $\Delta\,[\ell,u]$ reports the repair-minus-control mean
+and its interval. CIFAR-10 uses Student-$t$ intervals over five generated
+panels, with nominal 95\% simultaneous coverage for five prespecified
+contrasts; CIFAR-10.1 uses its own four-contrast family. MNIST uses 97.5\%
+paired Student-$t$ intervals over three training seeds for each of two
+prespecified outcomes. Ordinary or descriptive intervals are unadjusted
+paired 95\% intervals. Text-to-image intervals resample whole prompts;
+detection rates use exact binomial intervals. All intervals condition on
+fixed evaluation references. Regional-mass and support guarantees are
+exact; spread and panel/seed intervals are approximate and characterize
+the tested checkpoint or training recipe.

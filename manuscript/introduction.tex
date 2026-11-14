@@ -1,70 +1,47 @@
 \section{Introduction}
 \label{sec:intro}
-Every practical image generator is a set of choices: how many sampling
-steps, which solver and guidance, whether to distill the model, and which
-data to fine-tune on. Each choice is judged partly by how varied the
-outputs are. Yet two generators can have the same global
-variance while assigning very different probabilities to parts of the
-image distribution. For a few-step sampler, that difference determines
-what needs to change. Changing the starting noise can recover image
-neighborhoods lost during sampling, whereas a digit that remains absent
-under several adequate samplers calls for a test of the training
-distribution. The two cases require different controls and different
-outcomes, so a useful diagnosis must say where probability went, relative
-to what, and by how much.
+Image generators are shaped by choices of sampling steps, solver,
+guidance, distillation, and training data. Two configurations can have
+the same global variance while assigning very different probabilities
+to parts of the image distribution. For a few-step sampler, locating
+that difference guides intervention: starting-noise changes can recover
+neighborhoods lost during sampling, whereas a digit absent under several
+adequate samplers motivates a training comparison. A useful diagnosis
+therefore identifies where probability changed, relative to what, and
+by how much.
 
-Existing measurements answer parts of this question. Precision and recall,
-density and coverage, and authenticity summarize fidelity and coverage
-over the whole distribution~\cite{kynkaanniemi2019improved,naeem2020density,alaa2022faithful};
-Vendi, Scendi, and Conditional Vendi quantify kernel diversity and separate
-prompt from model variation~\cite{friedman2023vendi,ospanov2025scendi,jalali2026conditional}.
-The closest test, the number-of-statistically-different-bins (NDB) test,
-compares occupancy in fixed $K$-means regions~\cite{richardson2018ndb}.
-It rejects \emph{equality} of occupancy, which says that some change
-occurred but not whether a region lost a practically meaningful share of
-its probability. None of these measurements fixes the size of loss that
-matters, states how many samples are needed to certify it, or connects
-the finding to a matched intervention.
+Precision and recall, density and coverage, and authenticity summarize
+global fidelity and coverage~\cite{kynkaanniemi2019improved,naeem2020density,alaa2022faithful};
+Vendi, Scendi, and Conditional Vendi measure kernel diversity and prompt
+variation~\cite{friedman2023vendi,ospanov2025scendi,jalali2026conditional}.
+The number-of-statistically-different-bins (NDB) test compares occupancy
+in fixed $K$-means regions~\cite{richardson2018ndb}. Its equality test
+detects change. We seek a complementary capability: certifying a declared
+regional loss with explicit sample requirements and connecting it to a
+matched intervention.
 
-We close this gap with a fixed-reference audit (Fig.~\ref{fig:pipeline}).
-We fix the reference, the regions, and the effect sizes before evaluation.
-A longer teacher sampler measures the change introduced by a faster
-sampler, and observed data reveal an imbalance shared by both. The audit
-certifies a ratio of regional masses below a declared threshold, measures
-conditional spread among samples in the same region or under the same
-prompt separately from probability, and checks departures from reference
-support. Each diagnosis motivates one specified change, which is tested
-against its control on fresh samples. This design answers three questions.
+Our fixed-reference audit (Fig.~\ref{fig:pipeline}) fixes the reference,
+regions, and effect sizes before evaluation. A resolved teacher measures
+sampler-relative changes; observed data reveal imbalances shared by
+teacher and candidate. The audit certifies regional mass changes,
+separates conditional spread from probability and fidelity, and tests one
+specified intervention on independent samples. It answers three questions:
 Which regions lose or gain probability relative to a fixed reference?
-How does variation within a region or prompt change when fidelity is
-measured separately? Which controlled interventions repair the diagnosed
-deficit on independent samples?
+How does within-region or within-prompt variation change when fidelity
+is measured separately? Which controlled interventions repair the
+diagnosed deficit?
 
-The audit leads to two repairs that improve their targets at no extra
-cost (Table~\ref{tab:repair-summary}). On CIFAR-10, it finds that a
-two-call sampler depletes nine of ten teacher regions. Covariance
-initialization, which adds no denoiser calls, reduces two-call Kernel
-Inception Distance (KID) by 32.0\% and increases real-data DINO coverage
-from 0.206 to 0.288, and evaluating the same outputs against a separate
-CIFAR-10.1 reference gives 32.7\% lower KID. On MNIST, signed regional
-measurements reveal that targeted restoration of a withheld digit
-overshoots, and an equal-update ordinary-data continuation lowers
-class-mass error by 58.7\% within the declared fidelity margins.
-
-The audit is general and practical. It needs only samples from the
-generator, a frozen reference, and a declared effect size, so the same
-procedure covers pixel-space diffusion on two independently pretrained
-models, training interventions on digits and natural images, and four
-text-to-image families spanning latent diffusion, consistency and
-distribution-matching distillation, and flow-based generation, across
-pixel, latent, DINOv2, and CLIP representations. Its cost is explicit and
-amortized: reference samples are drawn once and reused across every
-configuration, and its bounds state before any experiment how many images
-a decision requires. Both repairs it identified add no inference cost.
-What is new is not another diversity score but a change in what is
-measured: a declared regional effect, certified with finite-sample
-guarantees against a fixed reference and tied to a matched intervention
-test.
+The audit guides two repairs at matched budgets
+(Table~\ref{tab:repair-summary}). On CIFAR-10, covariance initialization
+reduces two-call Kernel Inception Distance (KID) by 32.0\%, raises
+real-data DINO coverage from 0.206 to 0.288, and retains a 32.7\% KID
+reduction against the separately collected CIFAR-10.1 reference.
+On MNIST, ordinary continuation corrects targeted overshoot and reduces
+class-mass error by 58.7\% at equal updates, within declared fidelity
+margins. The same audit covers pixel-space diffusion, training
+interventions, and four text-to-image families across pixel, latent,
+DINOv2, and CLIP representations. Reusable reference pools amortize
+diagnosis across configurations.
 
 \begin{figure}[t]
 \centering
@@ -77,32 +54,20 @@ falls below $\rho=0.5$.}
 \label{fig:toy}
 \end{figure}
 
-A toy example shows why spread alone is not enough. Consider a reference
-with probabilities $(1/4,1/2,1/4)$ at feature values $(-2,0,2)$ and a
-candidate with equal mass at $-\sqrt{2}$ and $\sqrt{2}$. Both have mean
-zero and variance two. The fixed region $[-1/2,1/2]$ contains half the
-reference mass and zero candidate mass. If 100 independent draws per
-distribution give 50 reference hits and zero candidate hits, the
-one-region audit with family error budget $\alpha_{\rm occ}=0.025$ gives
-a 97.5\% simultaneous upper bound of 0.133 on the
-mass ratio. This certifies depletion at the declared threshold of 0.5
-(Fig.~\ref{fig:toy}, Sec.~\ref{sec:mass}). In this example, 34 draws
-per law already suffice.
+Figure~\ref{fig:toy} illustrates the distinction. A reference with masses
+$(1/4,1/2,1/4)$ at $(-2,0,2)$ and a candidate with equal mass at
+$\pm\sqrt{2}$ both have mean zero and variance two. Yet $[-1/2,1/2]$
+contains half the reference mass and no candidate mass. With 50 reference
+hits and zero candidate hits in 100 draws per law, the one-region audit
+at $\alpha_{\rm occ}=0.025$ bounds the mass ratio above by 0.133,
+certifying depletion below 0.5 (Sec.~\ref{sec:mass}).
 
-Our paper offers the following contributions. First, we introduce a
-fixed-reference audit that turns diversity from a single pooled score
-into certified regional statements, distinguishing loss of probability,
-within-region contraction, and departures from reference support, with
-finite-sample bounds that tell practitioners in advance how many samples
-a decision requires for any generator they can sample. Second, we show
-that these diagnoses lead directly to effective repairs at matched cost,
-a covariance-matched starting noise that improves a two-call sampler with
-no extra network evaluations and an ordinary-data continuation that
-corrects targeted overshoot at an equal training budget, both confirmed on
-independent samples and, for CIFAR-10, on a separately collected
-reference. Third, building on exact Gaussian analyses of diffusion
-sampling, we factor sampler error into initialization and integration
-terms and predict where a starting correction pays off, and we use the audit to resolve diversity
-reversals across four text-to-image families, showing that pooled spread,
-within-prompt spread, and the choice of teacher can each change the
-conclusion about the same generator.
+Our contributions are threefold. First, we introduce a sample-based
+audit separating regional mass, conditional spread, and reference
+support, with finite-sample regional certificates and explicit sample
+planning. Second, we confirm two diagnosis-guided repairs at matched
+inference or training budgets, including transfer to an independent
+CIFAR-10 reference. Third, Gaussian analysis separates initialization
+from integration error and predicts the low-budget correction, while
+comparisons across four text-to-image families resolve diversity
+reversals caused by pooling, representation, and teacher choice.

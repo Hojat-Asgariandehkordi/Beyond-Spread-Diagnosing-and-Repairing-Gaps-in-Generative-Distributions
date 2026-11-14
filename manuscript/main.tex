@@ -12,33 +12,32 @@
 \def\confYear{2027}
 \title{Beyond Spread: Diagnosing and Repairing Gaps in Generative Distributions}
 \author{}
+\setlength{\textfloatsep}{8pt}\setlength{\dbltextfloatsep}{8pt}
+\setlength{\intextsep}{8pt}\setlength{\floatsep}{6pt}\setlength{\dblfloatsep}{6pt}
 \hypersetup{pdftitle={Beyond Spread: Diagnosing and Repairing Gaps in Generative Distributions},pdfauthor={}}
 \raggedbottom
 \setlength{\hfuzz}{0.5pt}
 \begin{document}
 \maketitle
 \begin{abstract}
-A fast or distilled image generator can match the overall variation of
-its reference while losing an entire region of the image distribution,
-and a single spread score cannot reveal which part was lost or what to
-change. We introduce a fixed-reference audit that turns this blind spot
-into certified, actionable statements for any generator that can be
-sampled. Before evaluation, it fixes a reference set, a partition of
-feature space, and the size of loss that matters. It then certifies which
-regions lose or gain probability, measures variation within each region
-separately from fidelity, and tests one diagnosis-guided change against
-its control on fresh images, with finite-sample bounds that state in
-advance how many images a decision requires. Applied across pixel-space
-and latent diffusion, distilled and flow-based text-to-image models, and
-training interventions, the audit guides two repairs at no extra cost.
-Changing only the covariance of the starting noise of a two-step CIFAR-10
-sampler lowers the discrepancy from real images by 32.0\% without
-additional network evaluations, and returning to ordinary training after
-targeted MNIST training cuts the error in digit frequencies by 58.7\% at
-the same update budget. In text-to-image generation, the audit reveals how
-pooled and within-prompt variation move in opposite directions, so the
-choice of reference decides whether a sampler appears to lose or gain
-diversity.
+A fast or distilled image generator can preserve overall spread while
+losing entire regions of the image distribution. We introduce a
+fixed-reference audit that locates these gaps and tests targeted repairs
+using generator samples. Before evaluation, it fixes a reference,
+feature-space regions, and the loss magnitude of interest. The audit
+certifies regional probability changes, measures within-region variation
+separately from fidelity, and tests a diagnosis-guided change on fresh
+images, with explicit sample requirements for regional decisions.
+Across pixel-space and latent diffusion, distilled and flow-based
+text-to-image models, and training interventions, it guides two repairs
+at matched inference or training budgets. Changing only the starting-noise
+covariance of a two-step CIFAR-10 sampler lowers discrepancy from real
+images by 32.0\% without additional network evaluations. Returning to
+ordinary training after targeted MNIST training cuts digit-frequency
+error by 58.7\% at the same update budget. Text-to-image comparisons
+reveal diversity reversals caused by pooling and teacher choice,
+showing why useful diagnosis requires both conditioning and a fixed
+reference.
 \end{abstract}
 
 \begin{figure*}[t]
@@ -61,7 +60,6 @@ illustrative.}
 \input{results}
 \input{conclusion}
 \label{audit:lastbodypage}
-\clearpage
 \input{llm_usage}
 {\small
 \bibliographystyle{ieeenat_fullname}

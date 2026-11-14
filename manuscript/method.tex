@@ -1,11 +1,8 @@
 \section{A fixed-reference audit for distribution repair}
 \label{sec:method}
-Figure~\ref{fig:pipeline} summarizes the audit, from a fixed reference
-to a controlled intervention test. We first define the laws and pools
-it compares (Sec.~\ref{sec:setting}), then the regions and why pooled
-spread cannot replace them (Sec.~\ref{sec:regions}). Sections
-\ref{sec:mass}--\ref{sec:support} give the three diagnostics, and
-Sec.~\ref{sec:intervene} turns a diagnosis into an intervention test. Supp.~Algorithm~1 lists the complete procedure.
+The audit fixes a reference and regional targets, measures mass, spread,
+and support, and tests a diagnosis-guided intervention on independent
+outcomes (Fig.~\ref{fig:pipeline}; Supp.~Algorithm~1).
 
 \subsection{Setting and notation}
 \label{sec:setting}
@@ -18,16 +15,13 @@ data-relative representation. Before evaluation we declare the
 representation, regions, effect sizes, fidelity margins, comparison
 family, and budget.
 
-Three disjoint reference pools serve separate purposes: $R_{\rm fit}$
-fits the regions and support score, $R_{\rm cal}$ calibrates the support
-threshold, and $R_{\rm eval}$ estimates reference outcomes. Candidate
-evaluation images enter neither fit nor calibration. A diagnosis pool is
-used to choose the intervention and a separate outcome pool to test the
-frozen comparison. For each tested configuration, the audit returns a
-regional decision and uncertainty interval, a conditional spread
-estimate, and fidelity and cost measurements. An unresolved certificate
-leaves open both the presence and the absence of a practically
-meaningful deficit.
+Disjoint reference pools fit the regions and support score
+($R_{\rm fit}$), calibrate the threshold ($R_{\rm cal}$), and estimate
+reference outcomes ($R_{\rm eval}$). Candidate images enter neither
+fitting nor calibration. A diagnosis pool selects the intervention;
+an independent outcome pool evaluates the frozen comparison. The audit
+reports regional decisions and intervals, conditional spread, fidelity,
+and cost.
 
 \subsection{Representation, regions, and pooled spread}
 \label{sec:regions}
@@ -51,29 +45,18 @@ in the denominator of each region's probability. Held-out real accuracy
 validates the labeling rule on real images. Feature fidelity and
 uncurated samples help assess its interpretation on generated images.
 
-For an image $X$, write the reference and candidate regional masses as
-$p_j=P(X\in A_j)$ and $q_{aj}=Q_a(X\in A_j)$. Under $P$, let $Y=\phi(X)$
-have mean $\mu$, and let $\mu_j$ and $\Sigma_j$ be its mean and covariance
-conditional on $X\in A_j$.
-
-\paragraph{Lemma 1 (law of total covariance).}
-\emph{For any partition $\{A_j\}$,}
+Write the regional masses as $p_j=P(X\in A_j)$ and
+$q_{aj}=Q_a(X\in A_j)$. Under $P$, let $Y=\phi(X)$ have mean $\mu$,
+with conditional mean $\mu_j$ and covariance $\Sigma_j$ in $A_j$.
+The law of total covariance gives
 \begin{equation}
 \operatorname{Cov}_{P}(Y)
 =\sum_j p_j\Sigma_j+\sum_j p_j(\mu_j-\mu)(\mu_j-\mu)^\top,
 \label{eq:totalcov}
 \end{equation}
-\emph{where terms with zero mass contribute zero.}
-
-\noindent\emph{Proof.} Write $Y-\mu=(Y-\mu_J)+(\mu_J-\mu)$ with $J=J(X)$.
-Conditional on $J=j$, the first term has mean zero and covariance
-$\Sigma_j$, and the second is the constant $\mu_j-\mu$, so the cross terms
-vanish. Averaging the conditional second moments with weights $p_j$
-gives \cref{eq:totalcov}. \hfill$\square$
-
-The first term averages within-region covariance and the second measures
-the separation of regional means. Either term can change with regional
-mass, which explains why pooled spread alone cannot identify a deficit.
+with zero-mass terms contributing zero. Pooled spread combines
+within-region variation, regional separation, and their probability
+weights; the audit measures mass and conditional spread separately.
 
 \subsection{Certifying a regional change in mass}
 \label{sec:mass}
@@ -97,13 +80,9 @@ q_{aj}/p_j\in\left[q_{aj}^-/p_j^+,\ q_{aj}^+/p_j^-\right].
 \label{eq:occupancy}
 \end{equation}
 
-\noindent\emph{Proof.} Each comparison uses four one-sided bounds, each
-failing with probability at most $\varepsilon$. The union bound over the
-$4M$ bounds gives simultaneous validity with probability at least
-$1-4M\varepsilon=1-\alpha_{\rm occ}$. On that event, $p_j^-\le p_j\le
-p_j^+$ and $q_{aj}^-\le q_{aj}\le q_{aj}^+$, so dividing the smallest
-numerator by the largest denominator, and vice versa, bounds the ratio.
-\hfill$\square$
+\noindent\emph{Proof.} A union bound over the $4M$ one-sided endpoints
+gives simultaneous coverage at least $1-\alpha_{\rm occ}$; monotonicity of the
+ratio gives \cref{eq:occupancy}. \hfill$\square$
 
 For $p_j>0$, the upper endpoint is infinite when $p_j^-=0$. Only eligible
 regions receive a ratio decision. An eligible region has
@@ -124,14 +103,12 @@ n_Q>\frac{\log\varepsilon}{\log(1-\rho p_j^-)}.
 \label{eq:planning}
 \end{equation}
 
-\noindent\emph{Proof.} With zero observations among $n_Q$ draws, the exact
-upper bound is $q_{aj}^+=1-\varepsilon^{1/n_Q}$. Depletion requires
-$q_{aj}^+<\rho p_j^-$, that is, $\log(1-\rho p_j^-)<n_Q^{-1}\log\varepsilon$.
-Both logarithms are negative, so multiplying by $n_Q$ and dividing by
-$\log(1-\rho p_j^-)$ gives \cref{eq:planning}. \hfill$\square$
+\noindent\emph{Proof.} With zero candidate hits,
+$q_{aj}^+=1-\varepsilon^{1/n_Q}$; solving
+$q_{aj}^+<\rho p_j^-$ gives \cref{eq:planning}. \hfill$\square$
 
-Rare regions and broad comparison families therefore demand more samples.
-Even zero candidate counts cannot certify depletion in an ineligible region.
+The bound makes the sample cost of rare regions and broad comparison
+families explicit.
 
 \subsection{Conditional spread}
 \label{sec:spread}
@@ -180,16 +157,13 @@ When both are positive,
 \label{eq:decomp}
 \end{equation}
 separates sampler--teacher from teacher--data mass differences.
-Teacher-relative deficits motivate changing the starting noise with the
-denoiser, grid, and call budget fixed, or changing the grid or solver under
-the same conditioning. A validated data-relative imbalance that persists
-across qualified samplers motivates comparing ordinary and targeted
-continuations from the same parent at equal update budgets. Persistence
-across adequate samplers motivates a training comparison because the
-tested longer samplers did not resolve the deficit. We freeze the
-comparison after diagnosis and evaluate its targeted outcome, fidelity,
-coverage, and cost on independent samples. Final-sample deficits can have
-several causes. These controls test the effect of one specified change.
+Teacher-relative deficits motivate a starting-noise change at fixed
+denoiser, grid, and call budget, or a solver/grid comparison under the
+same conditioning. A validated data-relative imbalance persisting across
+qualified samplers motivates ordinary versus targeted continuation from
+the same parent at equal update budgets. After diagnosis, we freeze one
+change and its control, then evaluate the targeted outcome, fidelity,
+coverage, and cost on independent samples.
 
 \paragraph{Why the starting covariance matters.}
 Common schedules with leading timestep spacing start sampling from a
@@ -221,14 +195,13 @@ telescope to the clean endpoint:}
 \end{equation}
 \emph{where the product runs over adjacent grid transitions.}
 
-The derivation follows exact Gaussian analyses
-\cite{benita2025spectral,pierret2025gaussian} and is given in
-Supp.~Secs.~D--F. Matching the noisy marginal sets the first factor to one.
-Refining the same endpoints improves the second factor, because
-$\cos(b+c)=\cos b\cos c-\sin b\sin c\leq\cos b\cos c$ for nonnegative
-angles $b,c$ with $b+c\leq\pi/2$. Changing the leading-grid budget also
-changes the starting timestep. \Cref{eq:gaussian} extends directionwise
-to shared eigenvectors.
+The derivation builds on exact Gaussian analyses
+\cite{benita2025spectral,pierret2025gaussian}
+(Supp.~Secs.~D--F). Matching the noisy marginal sets the initialization
+factor to one; refining a grid with fixed endpoints improves the
+integration factor. Changing the leading-grid budget also changes the
+starting timestep. \Cref{eq:gaussian} extends directionwise to shared
+eigenvectors.
 
 For a leading grid starting at timestep $t_0$, the tested initializer is
 \begin{equation}

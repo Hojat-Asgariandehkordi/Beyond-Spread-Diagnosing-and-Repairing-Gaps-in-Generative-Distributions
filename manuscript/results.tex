@@ -3,16 +3,12 @@
 
 \subsection{Two matched-budget repairs}
 \label{sec:repairs}
-Both diagnosis-guided changes improve their target at matched cost
-(Table~\ref{tab:repair-summary}), in two different places where a
-generator can fail. On CIFAR-10, changing only the initial covariance at
-a fixed denoising budget improves agreement with real images and needs no
-additional denoiser calls. On MNIST, the comparison starts from the same
-targeted parent and holds the update budget fixed, and returning to
-ordinary training corrects the diagnosed excess and improves mass balance
-across all digits. The coverage row of Table~\ref{tab:repair-summary}
-reports an ordinary paired 95\% interval. The largest teacher region has
-reference mass 0.3535, and its row reports pooled masses.
+Table~\ref{tab:repair-summary} summarizes two diagnosis-guided repairs
+at matched budgets: covariance initialization improves two-call
+CIFAR-10 generation, and ordinary continuation corrects MNIST
+overrepresentation at equal updates. Coverage uses an ordinary paired
+95\% interval; largest-region entries are pooled masses, with teacher
+mass 0.3535.
 
 \begin{table}[t]
 \centering
@@ -50,18 +46,14 @@ $[\ell,u]$   & \multicolumn{1}{c}{\scriptsize$[-0.01878,-0.00676]$} & \multicolu
 
 \subsection{Covariance start improves two-call KID and coverage}
 \label{sec:cifar}
-The covariance start lowers two-call KID by 32.0\% and raises real-data
-coverage from 0.206 to 0.288 (Fig.~\ref{fig:cifar_initializer}). KID falls
-from 0.1858 to 0.1264, a paired difference of $-0.05938$
-[$-0.06138,-0.05739$], and the covariance start achieves the lowest KID of
-all same-budget arms: full-moment initialization reaches similar
-coverage (0.290) at higher KID (0.1405), and DPM++ and UniPC coincide at
-KID 0.2225. The audit located the deficit at initialization, and its
-frozen selector chose full-moment initialization (Sec.~\ref{sec:policy}).
-An ablation on the original paired seeds, a different panel set from the
-0.1405 above, then isolated the active component, with KID 0.2054 for mean
-only, 0.1413 for full moments, and 0.1261 for covariance only, and the
-separate six-arm study confirmed the covariance start on fresh samples.
+The covariance start reduces two-call KID by 32.0\% and raises real-data
+coverage from 0.206 to 0.288 (Fig.~\ref{fig:cifar_initializer}), achieving
+the lowest KID among same-budget arms. Full-moment initialization gives
+coverage 0.290 and KID 0.1405; DPM++ and UniPC both give KID 0.2225.
+The frozen selector first chose full-moment initialization
+(Sec.~\ref{sec:policy}). Its paired-seed ablation isolated covariance as
+the active component, and the separate six-arm study confirmed the
+covariance start on fresh samples.
 
 \begin{figure}[t]
 \centering
@@ -73,42 +65,33 @@ teacher-fit pixel basis separate initialization from integration.}
 \label{fig:cifar_initializer}
 \end{figure}
 
-\Cref{eq:gaussian} predicts this behaviour. The saved Gaussian predictions
-give standard-normal to matched aggregate variance ratios 0.216, 0.800,
-and 0.968 at two, four, and eight calls. Learned trajectories at four and
-eight calls correlate with the Gaussian prediction (Spearman 0.938 and
-0.894), with additional mixing (Supp.~Secs.~D--F). The same prediction
-identifies the regime where the repair matters. At four and eight calls,
-where the initialization factor is already 0.800 and 0.968, full-moment
-initialization gives KID 0.0926 and 0.0378 against 0.0903 and 0.0363 for
-leading DDIM (Supp.~Table~6). A starting correction is therefore the right
-intervention exactly where the audit and \cref{eq:gaussian} place the
-deficit, at the smallest budgets, which is also where fast generation is
-most valuable.
+\Cref{eq:gaussian} predicts the useful regime: standard-normal-to-matched
+aggregate variance ratios are 0.216, 0.800, and 0.968 at two, four, and
+eight calls. Learned trajectories correlate with the Gaussian prediction
+at four/eight calls (Spearman 0.938/0.894). At these larger budgets,
+full-moment initialization gives KID 0.0926/0.0378 versus DDIM's
+0.0903/0.0363 (Supp.~Secs.~D--F), concentrating the benefit at the
+smallest budget.
 
-The repair moves the whole output distribution toward the data. The share
-of outputs in the single largest teacher region falls from 97.30\% to
-91.29\%, and the fraction of images within the real-training 1--99\%
-frequency range rises from 0.72\% to 24.7\%. The gain also transfers to an
-independently collected reference: evaluating the unchanged generated
-outputs against CIFAR-10.1v6 lowers KID from 0.19060 to 0.12832 (32.7\%)
-and raises coverage from 0.3221 to 0.4268. The paired KID difference is
-$-0.06228$ [$-0.06422,-0.06035$], with 95\% simultaneous coverage across
-four contrasts (Supp.~Sec.~F.4). The remaining teacher-relative deficit
-and the precision change are in Supp.~Sec.~N.1.
+The repair improves real-data discrepancy and coverage. Concentration in
+the largest teacher region falls from 97.30\% to 91.29\%, while the
+fraction within the real-training 1--99\% frequency range rises from
+0.72\% to 24.7\%. Evaluating the same outputs against CIFAR-10.1v6 lowers
+KID from 0.19060 to 0.12832 (32.7\%) and raises coverage from 0.3221 to
+0.4268. The paired KID difference is $-0.06228$
+[$-0.06422,-0.06035$], with 95\% simultaneous coverage across four
+contrasts (Supp.~Sec.~F.4). Supp.~Sec.~N.1 reports the remaining
+teacher-relative deficit and precision change.
 
 \subsection{Intervention location separates spread from useful coverage}
 \label{sec:numerical}
-Where an intervention acts matters as much as how much spread it
-restores, and the audit makes this visible where a single spread score
-would mislead. At four calls, output covariance restoration raises pixel
-variance ratio from 0.376 to 0.917, yet coverage falls from 0.478 to 0.332
-and KID worsens from 0.0903 to 0.1024 (Fig.~\ref{fig:numerical_repair}).
-UniPC instead reaches coverage 0.549 and KID 0.0694. At eight calls, output
-restoration again worsens KID (0.0363 to 0.0505), while UniPC reaches
-0.0245 (Supp.~Table~6). Restoring spread at the output therefore does not
-recover real-data coverage, whereas a better integrator does.
-
+At four calls, output covariance restoration raises pixel spread from
+0.376 to 0.917, yet coverage falls from 0.478 to 0.332 and KID rises
+from 0.0903 to 0.1024 (Fig.~\ref{fig:numerical_repair}). UniPC instead
+reaches coverage 0.549 and KID 0.0694. At eight calls, output restoration
+again raises KID (0.0363 to 0.0505), while UniPC reaches 0.0245
+(Supp.~Sec.~F.2). The audit distinguishes restored spread from improved
+real-data coverage.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/numerical_repair.pdf}
@@ -117,7 +100,6 @@ CIFAR-10, five paired panels). Pixel spread is teacher-relative; coverage
 and KID use real data.}
 \label{fig:numerical_repair}
 \end{figure}
-
 The same discipline transfers to a second, independently pretrained
 checkpoint (Fig.~\ref{fig:edm_solver_audit}). On the EDM model, Heun lowers
 KID from 0.00876 to 0.00250 at 15 calls and from Euler's 0.00250 to
@@ -145,22 +127,15 @@ raises digit-3 mass from 0.00087 to 0.08747, toward the data target
 0.0983; the adjusted paired increase is 0.08660 [0.07677,0.09643].
 Coverage rises from 0.727 to 0.777, and the declared
 five-percentage-point fidelity margins pass against the full-data control.
-Doubling the restored digit's training weight overshoots to mass 0.1618.
-
-The follow-up shows that ordinary training repairs this overshoot. On
-DPM++25 outcomes, class-mass error falls from 0.02177 to 0.00900 (58.7\%),
-with paired difference $-0.01277$ [$-0.01878,-0.00676$]. Digit-3 absolute
-error falls from 0.06837 to 0.00747 (89.1\%): $-0.06090$
-[$-0.11814,-0.00366$]. All four fixed-reference precision and consensus
-fidelity constraints pass, and acceptance matches the full-data control.
-The ordinary and targeted continuations put 9.08\% and 16.67\% of outcome
-images in the digit-3 region, respectively, against 9.83\% in the real
-reference. Both error reductions also hold under DDIM25 and DDIM50
-(Supp.~Sec.~H.2), and digit-3 equivalence within $\pm0.03$ holds in all
-nine ordinary-continuation seed--sampler probes. Diagnosis costs 48,000
-images and 1.6 million denoiser calls per checkpoint across the three
-probes.
-
+Doubling the restored digit's training weight overshoots to mass 0.1618. At equal updates, ordinary continuation reduces class-mass error by
+58.7\% and digit-3 error by 89.1\% (Table~\ref{tab:repair-summary}).
+The ordinary and targeted branches assign 9.08\% and 16.67\% of outcomes
+to digit~3, against the real reference's 9.83\%. All four precision and
+consensus fidelity constraints pass, and acceptance matches the full-data
+control. Both error reductions also hold under DDIM25/DDIM50; digit-3
+equivalence within $\pm0.03$ holds in all nine ordinary-continuation
+seed--sampler probes. Diagnosis costs 48,000 images and 1.6 million
+denoiser calls per checkpoint (Supp.~Sec.~H.2).
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/mnist_full_balance.pdf}
@@ -169,51 +144,40 @@ outcomes, including rejection. (a) Mean signed gaps to real data.
 (b) Total variation per training seed at 8,000 updates.}
 \label{fig:mnist-full-balance}
 \end{figure}
-
-The improvement extends to the full outcome distribution. Each image
-belongs to one of ten consensus digit regions or the reject region, and
-each branch and seed contributes 2,000 images. Total variation falls from
-0.1461 to 0.0854 on average, a 41.6\% reduction, with descriptive paired
+Across all eleven classifier outcomes, including rejection, total
+variation falls from 0.1461 to 0.0854 (41.6\%), with descriptive paired
 difference $-0.0608$ [$-0.0828,-0.0387$]
-(Fig.~\ref{fig:mnist-full-balance}), and the improvement holds in all three
-seeds. The same pattern appears on natural images: on CIFAR-10 semantic
-regions, ordinary continuation improves DPM25 KID from 0.01479 to 0.01010
-and ten-region mean absolute mass error from 0.0247 to 0.0148, improves
-both outcomes under all five samplers, passes the declared
-precision/acceptance constraints, and outperforms event-ratio weighting
-on both metrics under all three long-step probes. Additional controls,
-including reference refinement, are in Supp.~Sec.~N.3.
+(Fig.~\ref{fig:mnist-full-balance}). Improvement holds in all three seeds.
+On CIFAR-10 semantic regions, ordinary continuation improves DPM25 KID
+from 0.01479 to 0.01010 and ten-region mass error from 0.0247 to 0.0148.
+Both improve under all five samplers, fidelity constraints pass, and both
+outperform event-ratio weighting under all three long-step probes.
+Reference refinement and further controls appear in Supp.~Sec.~N.3.
 
 \subsection{Crossed probes separate sampler deficits from persistent depletion}
 \label{sec:crossed-probes}
-Crossing samplers with training states shows that the audit sends each
-deficit to the intervention that can fix it. All 12 short-sampler cases
-from the two withheld training states retained digit-3 depletion under the
-three resolved probes and received both recommendations. The other 18
-cases received a sampler test, where an occupancy-only rule would have
-sent nine of them to retraining. On fresh samples, the 25-call sampler
-improved class-mass error, coverage, and classifier acceptance in all 18.
-For the persistent cases, combining ordinary restoration with the resolved
-sampler raises digit-3 mass to 0.08567, compared with 0.00067 for the
-resolved sampler with continued withholding, at the same training update
-budget. Cost and the remaining contrasts are in Supp.~Sec.~N.4.
+Crossed probes distinguish deficits responsive to longer sampling from
+depletion persisting across qualified samplers. All 12 short-sampler
+cases from withheld training states retained digit-3 depletion under
+three resolved probes and received sampler and training recommendations.
+The other 18 received a sampler test; an occupancy-only rule would send
+nine to retraining. On fresh samples, longer sampling improves
+class-mass error, coverage, and acceptance in all 18. For persistent
+cases, ordinary restoration with the resolved sampler raises digit-3
+mass to 0.08567 versus 0.00067 under continued withholding at equal
+updates. Cost and remaining contrasts appear in Supp.~Sec.~N.4.
 
 \subsection{Conditioning and reference matching resolve diversity reversals}
 \label{sec:t2i}
-In exploratory comparisons across four text-to-image families, the audit
-shows that the direction of a diversity change depends on how spread is
-pooled and which teacher serves as reference, and it makes both choices
-explicit. DDIM4 has pooled DINO spread ratio 0.919 [0.910,0.928], yet
-within-prompt spread ratio 1.306 [1.236,1.382]
-(Fig.~\ref{fig:t2i_representations}). A descriptive decomposition explains
-the reversal. Within-prompt variation rises from 0.400 to 0.523 of
-reference pooled spread, while the between-prompt contribution falls from
-0.600 to 0.396. The larger decrease pulls the sum below one. The
-within-prompt ratio uses only the reference within component.
-Sampling-latent and image-re-encoding ratios are 0.414 and 0.482, and the
-increased feature spread comes with lower learned preference
+Exploratory comparisons show that pooling and teacher choice can reverse
+the measured direction of diversity. DDIM4 has pooled DINO spread ratio
+0.919 [0.910,0.928] but within-prompt ratio 1.306 [1.236,1.382]
+(Fig.~\ref{fig:t2i_representations}). Within-prompt variation rises from
+0.400 to 0.523 of reference pooled spread, while the between-prompt
+component falls from 0.600 to 0.396, bringing the sum below one.
+Sampling-latent and image-re-encoding ratios are 0.414 and 0.482; the
+increased feature spread accompanies lower learned preference
 (Supp.~Sec.~N.5).
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/t2i_representation_reference.pdf}
@@ -222,7 +186,6 @@ of within-prompt spread (descriptive intervals). Rows give sampler and teacher C
 use the alternate teacher. The band marks $[0.9,1.1]$.}
 \label{fig:t2i_representations}
 \end{figure}
-
 Matching the teacher changes the conclusion about a distilled model. DMD2's
 DINO ratio moves from 1.251 [1.208,1.297] against CFG7.5 to
 0.901 [0.873,0.929] against its matched CFG1.75 teacher; against that
@@ -231,10 +194,7 @@ teacher, latent spread increases to 1.592 and learned preference reaches
 [0.746,0.779] while DINO spread rises to 1.118 [1.083,1.157]. At eight
 calls, Flow-DPM++ retains paired learned preference within tolerance,
 0.479 [0.471,0.487]. CADS increases DINO spread to 1.965 [1.828,2.121] but
-lowers preference to 0.354 [0.339,0.369]. The same measurement discipline
-distinguishes added variation from a fidelity-qualified improvement across
-latent diffusion, consistency distillation, distribution-matching
-distillation, and flow-based generation.
+lowers preference to 0.354 [0.339,0.369].
 
 \subsection{Validation makes the diagnostic resolution explicit}
 \label{sec:supportcontrols}
@@ -249,45 +209,30 @@ expansion. On cached image features, removing a 4.19\%-mass region is
 detected in 0/200, 196/200, and 200/200 trials at 250, 1,000, and 4,000
 samples per set (Supp.~Sec.~C).
 
-Rare regions require more samples, exactly as \cref{eq:planning} predicts
-(Supp.~Fig.~1). For complete removal with $M=10$, $\rho=0.5$,
-$\alpha_{\rm occ}=0.025$, and eligibility 0.001 (distinct from the default
-0.01), each point is 2,000 recorded trials with its saved exact 95\%
-binomial interval, a secondary analysis at the full-audit error level.
-Detection for a 1\%-mass region rises from 3.25\% at $n=2{,}000$ to 99.9\%
-at $n=5{,}000$. With ten regions, 5,000 samples per set, and a true ratio of
-0.5, NDB flags a change in 83.4\% of trials, while the depletion test
-correctly declines to certify a ratio below 0.5 in every trial (Supp.~Sec.~C.5).
-The certificate thus supplies what an equality test cannot, a bound on the
-magnitude of a loss.
-
-The substantial deficits are also robust to the representation and the
-partition. Across DINO PCA dimensions $\{16,32,64\}$ and region counts
-$K\in\{5,10,20\}$ on five CIFAR-10 configurations (525 regions in one exact
-family), leading DDIM at four calls, output covariance at four calls,
-leading DDIM at two calls, and the covariance start at two calls are
-depleted in all nine settings. Every configuration is contracted in all
-nine and passes the support gate, and UniPC at four calls is depleted in
-seven, with both exceptions at five regions (Supp.~Sec.~C). The deficits
-that motivate the repairs therefore do not depend on these design choices
-(further details in Supp.~Sec.~N.6).
+Rare-region detection follows the sample-planning bound
+(\cref{eq:planning}): for complete removal of a 1\%-mass region,
+detection rises from 3.25\% at $n=2{,}000$ to 99.9\% at $n=5{,}000$
+($M=10$, $\rho=0.5$, $\alpha_{\rm occ}=0.025$, eligibility 0.001;
+2,000 trials per setting; Supp.~Fig.~1). At the true ratio 0.5 and
+$n=5{,}000$, NDB flags change in 83.4\% of trials while the certificate
+makes no below-threshold claims (Supp.~Sec.~C.5). This distinguishes a
+detectable change from a certified loss of the declared magnitude. Across DINO PCA dimensions $\{16,32,64\}$ and $K\in\{5,10,20\}$
+(525 regions in one exact family), four of five CIFAR-10 configurations
+remain depleted in all nine settings; UniPC4 is depleted in seven.
+All five remain contracted and pass support, confirming that the
+principal findings persist across the tested representations and
+partitions (Supp.~Secs.~C, N.6).
 
 \subsection{What the audit establishes about choosing a sampler}
 \label{sec:policy}
-Used as a selector, the audit is competitive with the strongest
-alternatives while also explaining its choice. The original CIFAR
-selection rule averages KID 0.0790 across two, four, and eight calls,
-compared with 0.1039 for leading DDIM and 0.0784 for both Vendi and
-teacher-feature Fr\'echet selection. It comes within 0.0006 of the best
-selectors and chose full-moment initialization at two calls because of the
-diagnosed starting deficit, which the covariance-start result then
-confirmed as an intervention on fresh samples. In text-to-image
-generation, a frozen rule screens two fast samplers and uses a longer
-fallback when neither meets the diagnosis thresholds. Its independent
-outcomes pass the declared fidelity and spread gates, as do quality plus
-Vendi and fixed Sana DPM++8. The audit uses 14.06 and 14.28 denoising calls
-per image for Stable Diffusion and Sana, plus 528 diagnosis calls per
-prompt and 38,400 reference calls per family that are reused across every
-configuration audited. The full thresholds, policy table, call-only
-amortization, and matched-cost comparisons are in Supp.~Secs.~J--L
-and~N.7.
+As a selector, the audit explains its choices while remaining close to
+the strongest tested alternatives. Mean CIFAR KID is 0.0790 across two,
+four, and eight calls, versus 0.1039 for leading DDIM and 0.0784 for
+Vendi and teacher-feature Fr\'echet selection. The text-to-image policy
+screens two fast samplers and uses a longer fallback when neither meets
+the thresholds. Its independent outcomes pass fidelity and spread gates,
+as do quality plus Vendi and fixed Sana DPM++8. It uses 14.06/14.28
+denoising calls per image for Stable Diffusion/Sana, plus 528 diagnosis
+calls per prompt and 38,400 reusable reference calls per family.
+Thresholds, amortization, and matched-cost comparisons are reported in
+Supp.~Secs.~J--L and~N.7.
