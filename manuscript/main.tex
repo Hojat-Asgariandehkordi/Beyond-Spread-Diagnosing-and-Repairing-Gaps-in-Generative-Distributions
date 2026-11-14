@@ -17,22 +17,25 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-A fast image generator can match the overall variation of its reference
-while losing an entire region of the image distribution, and a single
-spread score cannot tell which part was lost or what to change. We
-introduce a fixed-reference audit that turns this blind spot into
-testable statements. Before evaluation, it fixes a reference set, a
-partition of feature space, and the size of loss that matters. It then
-certifies which regions lose or gain probability, measures variation
-within each region separately from fidelity, and tests one
-diagnosis-guided change against its control on fresh images. Its
-finite-sample bounds state in advance how many images a region requires.
-Guided by the audit, changing only the covariance of the starting noise
-of a two-step CIFAR-10 sampler lowers the discrepancy from real images by
-32.0\%, and returning to ordinary training after targeted MNIST training
-cuts the error in digit frequencies by 58.7\% at the same update budget.
-In exploratory text-to-image comparisons, the audit offers an account of
-how variation pooled across prompts falls while variation within each prompt rises, so the
+A fast or distilled image generator can match the overall variation of
+its reference while losing an entire region of the image distribution,
+and a single spread score cannot reveal which part was lost or what to
+change. We introduce a fixed-reference audit that turns this blind spot
+into certified, actionable statements for any generator that can be
+sampled. Before evaluation, it fixes a reference set, a partition of
+feature space, and the size of loss that matters. It then certifies which
+regions lose or gain probability, measures variation within each region
+separately from fidelity, and tests one diagnosis-guided change against
+its control on fresh images, with finite-sample bounds that state in
+advance how many images a decision requires. Applied across pixel-space
+and latent diffusion, distilled and flow-based text-to-image models, and
+training interventions, the audit guides two repairs at no extra cost.
+Changing only the covariance of the starting noise of a two-step CIFAR-10
+sampler lowers the discrepancy from real images by 32.0\% without
+additional network evaluations, and returning to ordinary training after
+targeted MNIST training cuts the error in digit frequencies by 58.7\% at
+the same update budget. In text-to-image generation, the audit reveals how
+pooled and within-prompt variation move in opposite directions, so the
 choice of reference decides whether a sampler appears to lose or gain
 diversity.
 \end{abstract}

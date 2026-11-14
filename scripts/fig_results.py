@@ -105,43 +105,52 @@ def fig_power():
 
 # --------------------------------------------------------------------------- Fig. 4
 def fig_init():
-    fig = plt.figure(figsize=(S.COL_W, 2.52))
-    gs = fig.add_gridspec(2, 1, height_ratios=[1.0, 1.05], hspace=0.78)
-    ax = fig.add_subplot(gs[0])
+    """Compact 1x2 at column width. (a) Gaussian prediction vs calls; (b) two-call KID per arm as
+    bars with capped 95% whiskers, so the narrow intervals stay visible at print size."""
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(S.COL_W, 1.34),
+                                 gridspec_kw=dict(width_ratios=[1.0, 1.12], wspace=0.95))
     st = {"Matched Gaussian": dict(color=S.REPAIR, ls="--", marker="s"),
           "Normal Gaussian": dict(color=S.CONTROL, ls=":", marker="o"),
           "Learned DDIM": dict(color=S.INK2, ls="-", marker="^")}
     for k, v in D.FIG4A.items():
-        ax.plot(D.FIG4A_CALLS, v, label=k, ms=3.8, mec="white", mew=0.5, **st[k])
-    ax.axhline(1.0, color=S.MUTED, lw=0.6, ls=(0, (1, 1.5)), zorder=1)
+        ax.plot(D.FIG4A_CALLS, v, label=k, ms=3.0, mec="white", mew=0.4, lw=1.1, **st[k])
+    ax.axhline(1.0, color=S.MUTED, lw=0.5, ls=(0, (1, 1.5)), zorder=1)
     ax.set_xscale("log", base=2)
     ax.xaxis.set_major_locator(FixedLocator(D.FIG4A_CALLS))
     ax.xaxis.set_minor_locator(NullLocator())
     ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(v)}"))
-    ax.set_ylim(-0.03, 1.08)
-    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
-    ax.set_xlabel("Denoiser calls (log scale)", labelpad=1.5)
-    ax.set_ylabel("Pixel-PCA variance ratio")
-    ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5), handlelength=2.2)
-    ax.set_title("(a) Gaussian predictions and learned DDIM", pad=4)
-    box = ax.get_position()
+    ax.set_ylim(-0.03, 1.12)
+    ax.set_yticks([0, 0.5, 1.0])
+    ax.set_xlabel("Denoiser calls", labelpad=1)
+    ax.set_ylabel("Variance ratio", labelpad=1.5)
+    ax.set_title("(a) Gaussian prediction", pad=3, fontsize=7.2)
+    h, l = ax.get_legend_handles_labels()
+    l = [{"Matched Gaussian": "Matched", "Normal Gaussian": "Standard", "Learned DDIM": "Learned"}[x] for x in l]
+    ax.legend(h, l, loc="upper right", bbox_to_anchor=(1.04, 0.95), fontsize=5.8, handlelength=1.9,
+              labelspacing=0.15, handletextpad=0.35, borderaxespad=0.1)
 
-    ax = fig.add_subplot(gs[1])
     rows = D.FIG4B_KID
-    rows_axis(ax, [nm(r[0]) for r in rows])
-    style_b = {"Leading DDIM": (S.CONTROL, "o", True), "Trailing DDIM": (S.CONTROL, "o", False),
-               "DPM++ / UniPC": (S.ALT, "s", True), "Full moments": (S.REPAIR, "D", False),
-               "Covariance only": (S.REPAIR, "D", True)}
-    hilite(ax, len(rows) - 1)
+    n = len(rows)
+    col = {"Leading DDIM": S.CONTROL, "Trailing DDIM": S.CONTROL, "DPM++ / UniPC": S.ALT,
+           "Full moments": S.REPAIR, "Covariance only": S.REPAIR}
     for i, (lab, est, lo, hi) in enumerate(rows):
-        c, m, f = style_b[lab]
-        S.ci(ax, i, est, lo, hi, c, marker=m, filled=f)
-        ax.annotate(f"{est:.1f}", (hi, i), xytext=(4, 0), textcoords="offset points", va="center",
-                    fontsize=6.8, color=S.INK2)
-    ax.set_xlim(115, 238)
-    ax.xaxis.set_major_locator(FixedLocator([125, 150, 175, 200, 225]))
-    ax.set_xlabel("KID \N{MULTIPLICATION SIGN}10\N{SUPERSCRIPT THREE} (lower is better)", labelpad=1.5)
-    ax.set_title("(b) Fresh two-call CIFAR-10 results", pad=4)
+        c = col[lab]
+        solid = lab in ("Leading DDIM", "DPM++ / UniPC", "Covariance only")
+        bx.barh(i, est, height=0.62, color=c if solid else "white", alpha=0.85 if solid else 1.0,
+                edgecolor=c, linewidth=0.9, zorder=2)
+        bx.errorbar([est], [i], xerr=[[est - lo], [hi - est]], fmt="none", ecolor=S.INK,
+                    elinewidth=0.9, capsize=2.6, capthick=0.9, zorder=4)
+        bx.text(hi + 7, i, f"{est:.1f}", va="center", ha="left", fontsize=6.2, color=S.INK2)
+    bx.set_yticks(range(n))
+    bx.set_yticklabels([nm(r[0]) for r in rows], fontsize=6.6)
+    bx.set_ylim(n - 0.5, -0.5)
+    bx.tick_params(axis="y", length=0, pad=2)
+    bx.grid(axis="y", visible=False)
+    bx.spines["left"].set_visible(False)
+    bx.set_xlim(0, 268)
+    bx.xaxis.set_major_locator(FixedLocator([0, 100, 200]))
+    bx.set_xlabel("KID \N{MULTIPLICATION SIGN}10\N{SUPERSCRIPT THREE} \N{DOWNWARDS ARROW}", labelpad=1)
+    bx.set_title("(b) Two-call CIFAR-10", pad=3, fontsize=7.2)
     save(fig, "initialization_repair")
 
 

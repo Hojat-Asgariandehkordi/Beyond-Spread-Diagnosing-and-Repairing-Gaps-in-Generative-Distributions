@@ -1,0 +1,107 @@
+\section{Boundary cases, controls, and limitations}
+\label{supp:boundary}
+This section collects boundary cases, secondary controls, and limitations
+that accompany the main-paper results. They are reported in full here so
+that the main paper can present each finding at the level it is
+established; no result was removed.
+
+\subsection{CIFAR-10 covariance start}
+\label{supp:boundary-cifar}
+The repair improves agreement with real data while leaving a large
+teacher-relative deficit. Nine of ten teacher-defined DINO regions
+remain depleted, and conditional spread remains contracted. The largest
+region holds 35.35\% of teacher images, 97.30\% of standard two-call
+outputs, and 91.29\% after the covariance start (Supp.~Sec.~C.6). The
+fraction within the real-training 1--99\% frequency range rises from
+0.72\% to 24.7\%, compared with 97.2\% for DDIM200 (Supp.~Secs.~F.6 and G.1).
+Against CIFAR-10.1v6, precision falls from 0.9756 to 0.9580 while KID and
+coverage improve. All four prespecified KID contrasts retain their
+direction against this reference, including the adverse output-map
+comparison.
+
+\subsection{Intervention location and solver choice}
+\label{supp:boundary-solver}
+The original four- and eight-call frozen comparisons retain the practical
+prediction transforms and clipping. In the matched-grid controls,
+four-call DDIM has KID 0.1132. Covariance-aware sampling does not improve
+this checkpoint within the four/eight-call ceilings when both forward and
+Jacobian--vector-product calls are counted; Sec.~F retains those controls
+and each declared cost convention. On the EDM checkpoint, Heun's fewer,
+larger steps give worse KID than Euler at three and seven calls. At seven
+calls, Heun achieves DINO precision of 0.906, while only 24.7\% of its
+images fall within the real-training frequency range, the same fraction
+as the two-call covariance start by coincidence. This mismatch shows the
+value of the complementary frequency check (Sec.~G.1).
+
+\subsection{MNIST restoration and continuation}
+\label{supp:boundary-mnist}
+Ordinary restoration lowers precision by 0.01407 versus continued
+withholding, while the declared five-percentage-point fidelity margins
+pass against the full-data control. In the follow-up, the ordinary
+continuation's classifier acceptance is 87.4\%, compared with 95.5\% on
+real data and 87.3\% for the full-data control, so rejection remains
+elevated relative to real data. All-class equivalence and coverage
+superiority remain unresolved.
+
+Reference refinement supplies a further control before attributing
+regional imbalance to training. On CIFAR-10, the accepted frog-region mass
+changes from 0.138 under DPM++25 to 0.103 under DDIM200, against 0.0943 in
+observed data. A separately fitted DINO classifier reproduces the
+direction. A discrepancy that shrinks with the reference sampler is
+therefore not, by itself, evidence of persistent data imbalance, which is
+why persistence across qualified sampler probes is part of the training
+comparison.
+
+\subsection{Crossed probes}
+\label{supp:boundary-crossed}
+On the 18 sampler-test cases, the 25-call sampler improved class-mass
+error, coverage, and classifier acceptance with a precision loss relative
+to the four-call sampler. This comparison increases inference cost from
+two or four calls to 25. It also leaves open whether training could
+further help; targeted checkpoints, for example, still overrepresent
+digit~3, which the depletion rule does not test. On the six cases starting
+from the original withheld state, the mean class-mass error difference
+between restoration with the resolved sampler and the resolved sampler
+alone is $-0.00331$ [$-0.00683,0.00020$], an ordinary paired 95\%
+interval across three training seeds after averaging the two short
+settings within each seed, so the additional class-mass benefit is
+unresolved.
+
+\subsection{Text-to-image generation}
+\label{supp:boundary-t2i}
+The reversal analysis was specified after the outcomes were available,
+and the intervals in the main-paper text-to-image figure are descriptive;
+Sec.~I retains the separate simultaneous 20-contrast checks. For DDIM4,
+the PickScore preference proxy is 0.247 [0.227,0.268], below the frozen
+0.45 tolerance. The DMD2 ratio against its matched CFG1.75 teacher,
+0.901 [0.873,0.929], is below equality but unresolved at the 0.9
+contraction margin. LCM4's change from 1.101 against CFG7.5 to 0.695
+against CFG1 reflects external-guidance sensitivity; CFG1 is not a
+verified training-matched teacher, and the comparison fails CLIP support
+compatibility.
+
+\subsection{Diagnostic resolution}
+\label{supp:boundary-resolution}
+The smallest Gaussian null yields 4/200 expansion flags from the
+approximate spread interval (Sec.~C). For a 1\%-mass region at 5,000
+samples per set, increasing the comparison family from 10 to 440 reduces
+detection from 99.9\% to 73.95\%.
+
+\subsection{Sampler-selection policy}
+\label{supp:boundary-policy}
+At the same inference cost, permuting the audit's text-to-image choices
+across prompts leaves the coverage and learned-preference differences
+unresolved in both families. The Sana audit scores below the 20-call
+fallback on ImageReward by 0.0261, with adjusted interval
+[$-0.0461,-0.0093$] (Secs.~J--L).
+
+\subsection{Scope and limitations}
+\label{supp:boundary-limits}
+The initialization result is shown on one pretrained CIFAR-10 checkpoint,
+and the digit findings rest on classifier labels whose rejection rate on
+generated images still exceeds that of real data. The spread intervals
+are approximate and fall outside the exact error guarantee, and the
+Student-$t$ intervals over panels or seeds capture sampling variability
+for a fixed checkpoint or training recipe, not variation across
+independently pretrained models. The matched-cost prompt shuffle leaves
+the advantage of per-prompt selection unresolved.

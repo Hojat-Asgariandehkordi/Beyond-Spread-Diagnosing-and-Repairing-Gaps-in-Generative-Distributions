@@ -3,33 +3,35 @@
 We asked which regions of an image distribution a generator loses or
 gains, how variation within a region or prompt changes when fidelity is
 measured separately, and which controlled interventions repair the
-diagnosed deficit. A distribution repair needs a target that survives
-changes in how samples are pooled and compared. Fixing the reference and
-a meaningful effect size makes regional probability loss testable, and
-the finite-sample bounds state in advance how many samples a given
-region and comparison family require. Conditional spread and fidelity
-then show whether changes in variation serve that target. In
-text-to-image generation, pooled spread fell while within-prompt spread
-rose, and changing to a training-matched teacher moved DMD2's DINO ratio
-from 1.251, above equality, to 0.901, below it.
-
-The two controlled tests establish partial repairs at matched budgets.
-Starting-covariance matching improves two-call agreement with real data
-on one pretrained model, even though most teacher-defined regions remain
-depleted. Ordinary continuation improves the full distribution of digit
+diagnosed deficit. Fixing the reference and a meaningful effect size
+answers the first question with certified regional statements whose
+sample requirements are known in advance. Measuring conditional spread
+alongside fidelity answers the second: in text-to-image generation,
+pooled spread fell while within-prompt spread rose, and changing to a
+training-matched teacher moved DMD2's DINO ratio from 1.251, above
+equality, to 0.901, below it. Testing one diagnosis-guided change against
+its control answers the third. Starting-covariance matching improves
+two-call agreement with real data at no additional network cost, and the
+gain transfers to a separately collected reference. Ordinary continuation
+corrects targeted overshoot and improves the full distribution of digit
 classifier outcomes across three paired seeds, including rejection in
-the measure. The crossed probes illustrate why the reference matters:
-longer sampling improves some short-sampler deficits, while the missing
-digit persists across adequate samplers when training withholds it.
+the measure. The crossed probes show that the audit separates deficits
+that more sampling removes from depletion that persists across adequate
+samplers when training withholds a digit.
 
-These conclusions have limits. The initialization result is shown on one
-pretrained CIFAR-10 checkpoint, and the digit findings rest on classifier
-labels whose rejection rate on generated images still exceeds that of real
-data. The spread intervals are approximate and fall outside the exact
-error guarantee, and the matched-cost prompt shuffle leaves the advantage
-of per-prompt selection unresolved. A second pretrained checkpoint would
-test transfer of the initialization result, and independent labels for
-generated digits would test whether the classifier findings track human
-judgments. Extending the certificates to prompt mixtures with an explicit
-sampling model would let the audit make population-level claims about
-text-to-image generators.
+These results point to a broader use. Because the audit needs only
+samples, a frozen reference, and a declared effect size, it can accompany
+any decision that changes how images are generated, from choosing step
+counts and solvers to distilling a model, adjusting guidance, or
+fine-tuning on targeted data. In each case it replaces a single spread
+number with a statement of what was lost, by how much, and which change
+restores it, at a cost that is fixed before the experiment. The repairs
+reported here were found this way and confirmed on fresh samples.
+
+The initialization result is shown on one pretrained checkpoint, and the
+digit findings rely on classifier labels; Supp.~Sec.~N.8 details these and
+the other scope conditions. Natural next steps are to apply the covariance
+start to further pretrained and distilled models, to pair the classifier
+regions with human judgments, and to extend the certificates to prompt
+mixtures with an explicit sampling model, which would let the audit make
+population-level claims about text-to-image generators.

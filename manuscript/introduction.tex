@@ -1,7 +1,9 @@
 \section{Introduction}
 \label{sec:intro}
-Few-step samplers and distilled generators are routinely judged by how
-varied their outputs are. Yet two generators can have the same global
+Every practical image generator is a set of choices: how many sampling
+steps, which solver and guidance, whether to distill the model, and which
+data to fine-tune on. Each choice is judged partly by how varied the
+outputs are. Yet two generators can have the same global
 variance while assigning very different probabilities to parts of the
 image distribution. For a few-step sampler, that difference determines
 what needs to change. Changing the starting noise can recover image
@@ -49,6 +51,21 @@ measurements reveal that targeted restoration of a withheld digit
 overshoots, and an equal-update ordinary-data continuation lowers
 class-mass error by 58.7\% within the declared fidelity margins.
 
+The audit is general and practical. It needs only samples from the
+generator, a frozen reference, and a declared effect size, so the same
+procedure covers pixel-space diffusion on two independently pretrained
+models, training interventions on digits and natural images, and four
+text-to-image families spanning latent diffusion, consistency and
+distribution-matching distillation, and flow-based generation, across
+pixel, latent, DINOv2, and CLIP representations. Its cost is explicit and
+amortized: reference samples are drawn once and reused across every
+configuration, and its bounds state before any experiment how many images
+a decision requires. Both repairs it identified add no inference cost.
+What is new is not another diversity score but a change in what is
+measured: a declared regional effect, certified with finite-sample
+guarantees against a fixed reference and tied to a matched intervention
+test.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/toy_example.pdf}
@@ -73,14 +90,19 @@ mass ratio. This certifies depletion at the declared threshold of 0.5
 per law already suffice.
 
 Our paper offers the following contributions. First, we introduce a
-fixed-reference audit that distinguishes regional loss, within-region
-contraction, and departures from reference support, and whose
-finite-sample bounds show how the resolution of a regional diagnosis
-depends on the effect size, the reference mass, and the comparison family.
-Second, we use these diagnoses to design two matched-budget repairs,
-a covariance-matched starting noise for a few-step sampler and an
-ordinary-data continuation after targeted training, and confirm both on
-independent samples. Third, we explain why pooled spread, within-prompt
-spread, and comparisons to different teachers can give different answers
-about the same generator, using exploratory text-to-image comparisons
-as the test case.
+fixed-reference audit that turns diversity from a single pooled score
+into certified regional statements, distinguishing loss of probability,
+within-region contraction, and departures from reference support, with
+finite-sample bounds that tell practitioners in advance how many samples
+a decision requires for any generator they can sample. Second, we show
+that these diagnoses lead directly to effective repairs at matched cost,
+a covariance-matched starting noise that improves a two-call sampler with
+no extra network evaluations and an ordinary-data continuation that
+corrects targeted overshoot at an equal training budget, both confirmed on
+independent samples and, for CIFAR-10, on a separately collected
+reference. Third, building on exact Gaussian analyses of diffusion
+sampling, we factor sampler error into initialization and integration
+terms and predict where a starting correction pays off, and we use the audit to resolve diversity
+reversals across four text-to-image families, showing that pooled spread,
+within-prompt spread, and the choice of teacher can each change the
+conclusion about the same generator.

@@ -86,3 +86,27 @@ Removed files (content moved): `cifar_experiments`, `mnist_experiments`, `t2i_ex
 `support_experiments`, `repair_summary`, `policy_summary`, `theory`. New: `experiments.tex`, `results.tex`.
 
 **Page count:** body now ends on page 10 (was 9; CVPR limit 8). Expanded working draft; compress on request.
+
+---
+
+# Author comments, 2026-11-14 (applied on main after restoring the finalized version)
+1. **Table 1 transposed:** outcomes are columns; Control / Repair / Δ [ℓ, u] are rows; one block per study; one column.
+2. **Fig. 3 compact 1×2** at column width (1.34 in tall): (a) Gaussian prediction with an in-panel legend;
+   (b) two-call KID as bars with dark capped 95% whiskers so the narrow intervals stay visible.
+3. **Fig. 8 → Supp. Fig. 1** (detection power); the main-text paragraph is shortened and cites Supp. Fig. 1.
+4. **Negative results and limitations → new Supp. Sec. N** ("Boundary cases, controls, and limitations"),
+   moved verbatim: remaining teacher-region deficit and CIFAR-10.1 precision (N.1); matched-grid controls,
+   covariance-aware sampling, EDM 3/7-call losses and frequency mismatch (N.2); MNIST precision/acceptance,
+   unresolved equivalences, frog reference refinement (N.3); crossed-probe cost and unresolved contrast (N.4);
+   text-to-image post hoc status, DDIM4 preference, DMD2 margin, LCM support (N.5); 4/200 null flags and
+   family-size effect (N.6); policy shuffle and ImageReward gap (N.7); scope and limitations (N.8).
+   Main text keeps a one-line pointer wherever a caveat matters for interpretation. N is appended after the
+   last existing section (M), so no existing "Supp. Sec." reference moved.
+5. **Positive rewrite** (breadth, practical significance, originality): abstract, introduction (new paragraph on
+   generality, amortized cost, and what is new; contributions recast), results lead sentences, conclusion
+   (broader use; limitations in two sentences pointing to N.8). Prior Gaussian analyses still credited.
+
+Checks: every number of the previous main text is either still in the main text or in Supp. Sec. N
+(script-checked; only layout values changed). Compile clean (main and supplement), no overfull boxes,
+no em dashes, figures in citation order. Body ends on p. 10 (≈9.6 pages; expanded draft).
+These edits are unreviewed; the last independent score (5/10) belongs to the earlier version.
