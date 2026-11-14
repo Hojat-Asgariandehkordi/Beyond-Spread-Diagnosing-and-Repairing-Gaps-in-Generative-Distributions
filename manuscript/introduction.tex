@@ -1,49 +1,63 @@
 \section{Introduction}
 \label{sec:intro}
-Two generators can have the same global variance while assigning very
-different probabilities to parts of the image distribution. For a
-few-step sampler, that difference determines what needs to change.
-Changing the starting noise can recover image neighborhoods lost during
-sampling. A digit that remains absent under several adequate samplers
-calls for a test of the training distribution. The two cases require
-different controls and different outcomes.
+Few-step samplers and distilled generators are routinely judged by how
+varied their outputs are. Yet two generators can have the same global
+variance while assigning very different probabilities to parts of the
+image distribution. For a few-step sampler, that difference determines
+what needs to change. Changing the starting noise can recover image
+neighborhoods lost during sampling, whereas a digit that remains absent
+under several adequate samplers calls for a test of the training
+distribution. The two cases require different controls and different
+outcomes, so a useful diagnosis must say where probability went, relative
+to what, and by how much.
 
-Existing occupancy tests can detect a change in a fixed region
-\cite{richardson2018ndb}. To act on that change, however, we need to know
-how large it is, what reference it is relative to, and whether an
-intervention improves the target without violating fidelity criteria.
-An equality test does not answer these questions, and a pooled measure
-of spread can stay unchanged while a region is lost.
+Existing measurements answer parts of this question. Precision and recall,
+density and coverage, and authenticity summarize fidelity and coverage
+over the whole distribution~\cite{kynkaanniemi2019improved,naeem2020density,alaa2022faithful};
+Vendi, Scendi, and Conditional Vendi quantify kernel diversity and separate
+prompt from model variation~\cite{friedman2023vendi,ospanov2025scendi,jalali2026conditional}.
+The closest test, the number-of-statistically-different-bins (NDB) test,
+compares occupancy in fixed $K$-means regions~\cite{richardson2018ndb}.
+It rejects \emph{equality} of occupancy, which says that some change
+occurred but not whether a region lost a practically meaningful share of
+its probability. None of these measurements fixes the size of loss that
+matters, states how many samples are needed to certify it, or connects
+the finding to a matched intervention.
 
-We therefore fix the reference, the regions, and the effect sizes before
-evaluation (Fig.~\ref{fig:pipeline}). A longer teacher sampler measures
-the change introduced by a faster sampler, and observed data can reveal an
-imbalance shared by both. Conditional spread then measures variation among
-samples in the same region or under the same prompt, separately from
-regional probability. Each diagnosis motivates one specified change, which
-is tested against its control on fresh samples. We ask three questions.
+We close this gap with a fixed-reference audit (Fig.~\ref{fig:pipeline}).
+We fix the reference, the regions, and the effect sizes before evaluation.
+A longer teacher sampler measures the change introduced by a faster
+sampler, and observed data reveal an imbalance shared by both. The audit
+certifies a ratio of regional masses below a declared threshold, measures
+conditional spread among samples in the same region or under the same
+prompt separately from probability, and checks departures from reference
+support. Each diagnosis motivates one specified change, which is tested
+against its control on fresh samples. This design answers three questions.
 Which regions lose or gain probability relative to a fixed reference?
 How does variation within a region or prompt change when fidelity is
 measured separately? Which controlled interventions repair the diagnosed
 deficit on independent samples?
 
-Two confirmed repairs demonstrate this approach (Fig.~\ref{fig:overview}).
-On CIFAR-10, covariance initialization reduces two-call Kernel Inception
-Distance (KID) by 32.0\% and increases real-data DINO coverage from 0.206
-to 0.288. Evaluating the same outputs against a separate CIFAR-10.1 reference
-gives 32.7\% lower KID. On MNIST, signed regional measurements identify
-overcorrection after targeted restoration. A separate equal-update
-ordinary-data continuation lowers class-mass error by 58.7\% within the
-declared fidelity margins.
+The audit leads to two repairs that improve their targets at no extra
+cost (Table~\ref{tab:repair-summary}). On CIFAR-10, it finds that a
+two-call sampler depletes nine of ten teacher regions. Covariance
+initialization, which adds no denoiser calls, reduces two-call Kernel
+Inception Distance (KID) by 32.0\% and increases real-data DINO coverage
+from 0.206 to 0.288, and evaluating the same outputs against a separate
+CIFAR-10.1 reference gives 32.7\% lower KID. On MNIST, signed regional
+measurements reveal that targeted restoration of a withheld digit
+overshoots, and an equal-update ordinary-data continuation lowers
+class-mass error by 58.7\% within the declared fidelity margins.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\linewidth]{../figures/overview.pdf}
-\caption{Two matched-budget repairs. (a) Covariance start versus standard
-start at two denoiser calls on CIFAR-10. (b) Ordinary continuation versus
-continued targeting after 8,000 MNIST updates. Bars are 95\% intervals
-(Sec.~\ref{sec:metrics}).}
-\label{fig:overview}
+\includegraphics[width=\linewidth]{../figures/toy_example.pdf}
+\caption{Spread cannot see a lost region, but a fixed-region certificate can.
+(a) Reference and candidate have equal mean and variance, yet region $A$
+holds half of $P$ and none of $Q$. (b) Upper bound on the mass ratio from
+Proposition~1 with zero candidate hits; it certifies depletion once it
+falls below $\rho=0.5$.}
+\label{fig:toy}
 \end{figure}
 
 A toy example shows why spread alone is not enough. Consider a reference
@@ -54,7 +68,8 @@ reference mass and zero candidate mass. If 100 independent draws per
 distribution give 50 reference hits and zero candidate hits, the
 one-region audit gives a 97.5\% simultaneous upper bound of 0.133 on the
 mass ratio. This certifies depletion at the declared threshold of 0.5
-(Sec.~\ref{sec:mass}).
+(Fig.~\ref{fig:toy}, Sec.~\ref{sec:mass}). In this example, 34 draws
+per law already suffice.
 
 Our paper offers the following contributions. First, we introduce a
 fixed-reference audit that distinguishes regional loss, within-region
@@ -67,9 +82,3 @@ ordinary-data continuation after targeted training, and confirm both on
 independent samples. Third, we explain why pooled spread, within-prompt
 spread, and comparisons to different teachers can give different answers
 about the same generator, using text-to-image models as the test case.
-
-Section~\ref{sec:related} reviews related work, and Sec.~\ref{sec:method}
-defines the audit and its guarantees. Section~\ref{sec:experiments}
-describes the data, settings, baselines, and metrics.
-Section~\ref{sec:results} reports the repairs, the controls, and the
-resolution of the audit, and Sec.~\ref{sec:conclusion} concludes.

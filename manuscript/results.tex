@@ -3,8 +3,8 @@
 
 \subsection{Two matched-budget repairs}
 \label{sec:repairs}
-Table~\ref{tab:repair-summary} summarizes the two controlled repairs.
-On CIFAR-10, changing the initial covariance at a fixed denoising budget
+Both diagnosis-guided changes improve their target at matched cost
+(Table~\ref{tab:repair-summary}). On CIFAR-10, changing the initial covariance at a fixed denoising budget
 improves agreement with real images, while a large share of generated
 images still falls in a single teacher region. On MNIST, the comparison
 starts from the same targeted parent and holds the update budget fixed.
@@ -87,7 +87,8 @@ comparison below.
 
 \subsection{Intervention location separates spread from useful coverage}
 \label{sec:numerical}
-At four calls, output covariance restoration raises pixel variance ratio
+Where an intervention acts matters as much as how much spread it
+restores. At four calls, output covariance restoration raises pixel variance ratio
 from 0.376 to 0.917, while coverage falls from 0.478 to 0.332 and KID
 worsens from 0.0903 to 0.1024 (Fig.~\ref{fig:numerical_repair}). UniPC
 instead reaches coverage 0.549 and KID 0.0694. At eight calls, output
@@ -127,8 +128,9 @@ without model-seed uncertainty.}
 
 \subsection{Signed mass measurements enable calibrated semantic repair}
 \label{sec:mnist}
-Signed regional measurements distinguish missing probability from excess
-probability (Supp.~Sec.~H.2). Withholding digit~3 creates persistent
+Signed mass measurements reveal an overcorrection that a depletion test
+cannot see, and ordinary continuation repairs it. They distinguish missing
+probability from excess probability (Supp.~Sec.~H.2). Withholding digit~3 creates persistent
 real-data-relative depletion under DDIM25, DDIM50, and DPM++25 in all three
 training seeds. At DPM++25, ordinary restoration raises digit-3 mass from
 0.00087 to 0.08747, toward the data target 0.0983; the adjusted paired
@@ -191,6 +193,8 @@ across qualified sampler probes is part of the training comparison.
 
 \subsection{Crossed probes separate sampler deficits from persistent depletion}
 \label{sec:crossed-probes}
+Crossing samplers with training states separates deficits that more
+sampling steps remove from depletion that only training can repair.
 A short sampler can create a regional deficit that clears when sampling
 is given more steps. All 12 short-sampler cases from the two withheld
 training states retained digit-3 depletion under the three resolved probes
@@ -215,7 +219,9 @@ objectives improve under the chosen comparison.
 
 \subsection{Conditioning and reference matching resolve diversity reversals}
 \label{sec:t2i}
-DDIM4 has pooled DINO spread ratio 0.919 [0.910,0.928], yet within-prompt
+The direction of a diversity change depends on how spread is pooled and
+which teacher serves as reference, and the audit makes both choices
+explicit. DDIM4 has pooled DINO spread ratio 0.919 [0.910,0.928], yet within-prompt
 spread ratio 1.306 [1.236,1.382] (Fig.~\ref{fig:t2i_representations}).
 A secondary descriptive decomposition, specified after access to these
 outcomes, explains the reversal. Within-prompt variation rises from

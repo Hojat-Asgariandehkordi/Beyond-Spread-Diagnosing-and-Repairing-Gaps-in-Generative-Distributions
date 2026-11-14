@@ -33,7 +33,11 @@ def apply():
     mpl.rcParams.update({
         "font.family": "serif",
         "font.serif": ["Times New Roman", "TeX Gyre Termes", "Nimbus Roman", "Liberation Serif", "Times"],
-        "mathtext.fontset": "stix",
+        "mathtext.fontset": "custom",
+        "mathtext.rm": "TeX Gyre Termes",
+        "mathtext.it": "TeX Gyre Termes:italic",
+        "mathtext.bf": "TeX Gyre Termes:bold",
+        "mathtext.fallback": "stix",
         "font.size": 7.5,
         "axes.titlesize": 8,
         "axes.titleweight": "bold",

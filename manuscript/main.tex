@@ -2,6 +2,8 @@
 \usepackage[review]{cvpr}
 \usepackage{array}
 \usepackage{microtype}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
 \definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
 \usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
 \usepackage[capitalize]{cleveref}
@@ -15,20 +17,24 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Two image generators can produce equally varied images while one of them
-has lost an entire part of the image distribution. We introduce an audit
-that compares a generator with a fixed set of reference images. It
-measures how much probability each part of the image space gains or
-loses, how varied the images within each part are, and whether a
-targeted change improves the intended outcome on fresh images. The audit
-also states in advance how large a loss must be to count and how many
-images are needed to detect it. On CIFAR-10 with a two-step sampler,
-changing only the covariance of the starting noise lowers the distance
-to real images by 32\%. On MNIST, ordinary training corrects a digit that
-targeted training had overshot, reducing the mean error in digit
-frequencies by 59\% at the same training budget. In text-to-image
-generation, the audit explains how variation pooled across prompts can
-fall while variation within each prompt rises.
+A fast image generator can match the overall variation of its reference
+while losing an entire region of the image distribution, and a single
+spread score cannot tell which part was lost or what to change. We
+introduce a fixed-reference audit that turns this blind spot into
+testable statements. Before evaluation, it fixes a reference set, a
+partition of feature space, and the size of loss that matters. It then
+certifies which regions lose or gain probability, measures variation
+within each region separately from fidelity, and tests one
+diagnosis-guided change against its control on fresh images. Its
+finite-sample bounds state in advance how many images a region requires.
+Guided by the audit, changing only the covariance of the starting noise
+of a two-step CIFAR-10 sampler lowers the distance to real images by
+32\%, and returning to ordinary training after targeted MNIST training
+cuts the error in digit frequencies by 59\% at the same update budget.
+In text-to-image generation, the audit explains why variation pooled
+across prompts falls while variation within each prompt rises, so the
+choice of reference decides whether a sampler appears to lose or gain
+diversity.
 \end{abstract}
 
 \begin{figure*}[t]
