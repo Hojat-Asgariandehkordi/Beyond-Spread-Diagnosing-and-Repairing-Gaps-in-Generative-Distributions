@@ -94,8 +94,33 @@ priority = [P(help)·benefit − P(harm)·downside] / cost; benefit/downside 1�
 ## Review history
 | Snapshot | Commit | Digest (main) | Overall | Confidence | Notes |
 |---|---|---|---|---|---|
+| v2 | 1e69ab5 | d522416b40bcdf90 | **5/10** (O6 S7 E5 C4 P6) | medium | **best reviewed, retained.** Remaining: covariance-only form found by ablation, one checkpoint; no case where the audit's decision beats KID/NDB-guided choice; pixel-PCA regions may track blur; dense vocabulary; no main-text certificate table |
 | v1 | c941889 | c6ae6e6546d44fcd | **5/10** (O5 S6 E5 C4 P6) | medium | kept; remaining: audit's role in choosing covariance-only; practical significance (one checkpoint); abstract T2I overclaim; crossed-probe CI spans 0; density/undefined terms; missing ImageReward/FID cites; z scaling ambiguity |
 | v0 | 0110cb6 | db6dd18820aa376f | **4/10** (O5 S6 E4 C4 P6) | medium | baseline; objections: degenerate 2-call regime & no 4/8-call result; thin uncertainty; no sensitivity; T2I post hoc/overstated; undefined protocol terms; NDB null differs |
+
+## Cycle 2 ledger
+- Terminology paragraph (Sec. 4 opening); K-means vs spread vs support coordinates stated (Sec. 3.2); Lemma 1 named as the
+  law of total covariance; starting-noise mismatch attributed to [lin2024flawed], priors to [lee2022priorgrad];
+  covariance-only provenance (audit → full moments; ablation → covariance; six-arm fresh confirmation); crossed-probe
+  difference stated as unresolved; selector gap stated exactly (0.0006); EDM coincident values labelled; ImageReward and
+  FID cited; Fig. 3a y-axis "Pixel-PCA variance ratio"; abstract/intro mark text-to-image as exploratory.
+
+## Post-review corrections → v2.1 (UNSCORED; last score 5/10 is historical, attached to v2)
+- Abstract: "discrepancy from real images"; text-to-image "offers an account" (was "explains why").
+- Toy example states alpha_occ = 0.025. Sec. 4.4 distinguishes the five-contrast and four-contrast families.
+- Full-moment KID 0.1405 vs 0.1413 attributed to different panel sets. No numbers changed.
+
+## Outcome
+Baseline 4/10 → v1 5/10 → v2 5/10 (sub-scores up: originality 5→6, soundness 6→7). Target 7.5 not reached.
+The remaining obstacle is evidential, not presentational: every reviewer's top objection asks for results that need
+new runs. Best next research tasks, in order of expected value:
+1. Covariance start on the EDM checkpoint already in the paper (+ report teacher-sampling cost of Ĉ): tests transfer.
+2. A decision case where the audit's choice differs from KID/NDB/Vendi-guided choice and wins on fresh samples.
+3. Semantic (classifier) audit of the CIFAR-10 repair before/after, with exemplars of the dominant region (blur vs content).
+4. More MNIST seeds (currently 3) to resolve the crossed-probe difference.
+5. A distilled two-step generator as context for the CIFAR two-call numbers.
+Author items: Supp. Table 7 counts identical DPM++2M/UniPC outputs as two contrasts; Supp. Table 12 MAD/Acc. columns
+duplicate Table 13 values (v0 reviewer); confirm recovered figure intervals; LLM statement vs CVPR 2027 policy.
 
 ## Material unresolved items
 - Per-arm intervals recovered from draft figure geometry (35/35 printed values agree): need analysis output.
