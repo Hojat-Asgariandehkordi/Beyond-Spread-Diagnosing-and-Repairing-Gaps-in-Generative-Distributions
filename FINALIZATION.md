@@ -122,6 +122,13 @@ new runs. Best next research tasks, in order of expected value:
 Author items: Supp. Table 7 counts identical DPM++2M/UniPC outputs as two contrasts; Supp. Table 12 MAD/Acc. columns
 duplicate Table 13 values (v0 reviewer); confirm recovered figure intervals; LLM statement vs CVPR 2027 policy.
 
+## Final QA (re-sent prompts were byte-identical; no third cycle under Part A's cap)
+- No em dashes in the manuscript sources; PDF Author empty; no identifying strings (only "University of Toronto" in the CIFAR reference).
+- No undefined references or citations; no overfull boxes; body ends early on p. 11 (~10.3 pages; expanded draft).
+- Citations added in cycle 2 verified against primary sources: Lin et al. (WACV 2024) state that some sampler
+  implementations do not start from the last timestep; PriorGrad (ICLR 2022) uses a data-statistics prior in training and sampling.
+- Title reviewed and kept: it states the thesis (beyond pooled spread; diagnose and repair regional gaps).
+
 ## Material unresolved items
 - Per-arm intervals recovered from draft figure geometry (35/35 printed values agree): need analysis output.
 - Page limit: body ~9.3 pages (expanded draft).
