@@ -74,9 +74,14 @@ def apply():
     })
 
 
-def ci(ax, y, est, lo, hi, color, marker="o", size=4.6, filled=True, lw=1.3, zorder=3):
-    """Horizontal estimate with a capped 95% interval."""
+def ci(ax, y, est, lo, hi, color, marker="o", size=4.6, filled=True, lw=1.3, zorder=3,
+       capsize=2.4, whisker_on_top=False):
+    """Horizontal estimate with a capped 95% interval. With whisker_on_top the capped
+    interval is drawn over the marker, so both caps stay visible even when the interval
+    is narrower than the marker."""
+    zw, zm = (zorder + 1, zorder) if whisker_on_top else (zorder, zorder + 1)
     ax.errorbar([est], [y], xerr=[[est - lo], [hi - est]], fmt="none", ecolor=color,
-                elinewidth=lw, capsize=2.4, capthick=lw, zorder=zorder)
+                elinewidth=lw, capsize=capsize, capthick=lw, zorder=zw)
     ax.plot([est], [y], marker=marker, ms=size, color=color, mfc=color if filled else "white",
-            mec=color if not filled else "white", mew=0.9 if not filled else 0.5, ls="none", zorder=zorder + 1)
+            mec=color if not filled else "white", mew=0.9 if not filled else 0.5, ls="none", zorder=zm,
+            alpha=0.9 if whisker_on_top and filled else 1.0)

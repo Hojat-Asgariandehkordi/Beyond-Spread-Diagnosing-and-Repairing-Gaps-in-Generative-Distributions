@@ -168,7 +168,7 @@ def fig_numerical():
             ax.grid(axis="y", visible=False)
         for i, (lab, est, lo, hi) in enumerate(rows):
             c, m = cols[lab]
-            S.ci(ax, i, est, lo, hi, c, marker=m)
+            S.ci(ax, i, est, lo, hi, c, marker=m, size=3.2, lw=1.2, capsize=3.0, whisker_on_top=True)
         if j == 0:
             ax.axvline(1.0, color=S.INK2, lw=0.7, ls="--", zorder=1)
         ax.set_xlim(*xlim)
@@ -270,7 +270,8 @@ def fig_t2i():
         ax.axvline(1.0, color=S.INK2, lw=0.7, ls="--", zorder=1)
         for i, (lab, est, lo, hi) in enumerate(rows):
             c, m = fam[lab.split(" /")[0]]
-            S.ci(ax, i, est, lo, hi, c, marker=m, filled=lab not in open_rows, size=4.2)
+            S.ci(ax, i, est, lo, hi, c, marker=m, filled=lab not in open_rows, size=3.2, lw=1.2,
+                 capsize=3.0, whisker_on_top=True)
         ax.set_xlim(0.3, 1.75)
         ax.xaxis.set_major_locator(FixedLocator([0.5, 1.0, 1.5]))
         ax.set_title(titles[key], loc="center", pad=3, fontsize=7.5)
