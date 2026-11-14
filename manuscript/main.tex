@@ -32,9 +32,10 @@ Across pixel-space and latent diffusion, distilled and flow-based
 text-to-image models, and training interventions, it guides two repairs
 at matched inference or training budgets. Changing only the starting-noise
 covariance of a two-step CIFAR-10 sampler lowers discrepancy from real
-images by 32.0\% without additional network evaluations. Returning to
+images by 32.0\% without additional network evaluations, and the gain
+holds on an independently collected test set. Returning to
 ordinary training after targeted MNIST training cuts digit-frequency
-error by 58.7\% at the same update budget. Text-to-image comparisons
+error by 58.7\% and digit-3 error by 89.1\% at the same update budget. Text-to-image comparisons
 reveal diversity reversals caused by pooling and teacher choice,
 showing why useful diagnosis requires both conditioning and a fixed
 reference.

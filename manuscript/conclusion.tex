@@ -1,1 +1,14 @@
+\section{Conclusion}
+\label{sec:conclusion}
 Our fixed-reference audit turns generative diversity assessment into a framework for locating, quantifying, and repairing distributional gaps. By separating regional probability, conditional spread, and reference support, it makes changes in a generator’s output distribution interpretable and actionable. Finite-sample certificates establish the magnitude of regional mass changes, explicit sample requirements define the audit’s resolution, and controlled interventions test whether a diagnosis leads to improvement on independent outcomes. The experiments demonstrate this connection at matched computational budgets. Covariance initialization reduces two-call CIFAR-10 KID by 32.0\% and improves real-data coverage without additional denoiser calls, with gains retained against CIFAR-10.1. Ordinary continuation reduces MNIST class-mass error by 58.7\% at equal training updates and improves total variation across all classifier outcomes, including rejection. Gaussian analysis separates initialization from integration error, while crossed probes distinguish sampler-sensitive deficits from persistent depletion. Across four text-to-image families, the audit reveals diversity reversals caused by pooling, representation, and teacher choice. Together, these results establish a practical link between statistically grounded distributional diagnosis and targeted generator improvement, giving practitioners a concrete basis for deciding what to change.
+
+The same procedure extends naturally to any decision that changes how
+images are generated, from choosing step counts, solvers, and guidance to
+distilling a model or fine-tuning it on targeted data. In each case it
+replaces a single spread number with a statement of what was lost, by how
+much, and which change restores it, at a cost fixed before the experiment.
+Applying the covariance start to further pretrained and distilled models,
+pairing classifier regions with human judgments, and extending the
+certificates to prompt mixtures with an explicit sampling model are direct
+next steps that the framework already supports. Supp.~Sec.~N reports the
+boundary cases and controls behind each result.

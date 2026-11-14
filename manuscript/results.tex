@@ -50,10 +50,12 @@ The covariance start reduces two-call KID by 32.0\% and raises real-data
 coverage from 0.206 to 0.288 (Fig.~\ref{fig:cifar_initializer}), achieving
 the lowest KID among same-budget arms. Full-moment initialization gives
 coverage 0.290 and KID 0.1405; DPM++ and UniPC both give KID 0.2225.
-The frozen selector first chose full-moment initialization
-(Sec.~\ref{sec:policy}). Its paired-seed ablation isolated covariance as
-the active component, and the separate six-arm study confirmed the
-covariance start on fresh samples.
+The audit traced the deficit to the starting noise, and a paired-seed
+ablation then identified the covariance as the active component: KID is
+0.2054 when only the mean is matched, 0.1413 for full moments, and 0.1261
+when only the covariance is matched. A separate six-arm study confirmed
+the covariance start on fresh samples, so the gain comes from one
+identifiable property of the initial noise.
 
 \begin{figure}[t]
 \centering
@@ -70,8 +72,9 @@ aggregate variance ratios are 0.216, 0.800, and 0.968 at two, four, and
 eight calls. Learned trajectories correlate with the Gaussian prediction
 at four/eight calls (Spearman 0.938/0.894). At these larger budgets,
 full-moment initialization gives KID 0.0926/0.0378 versus DDIM's
-0.0903/0.0363 (Supp.~Secs.~D--F), concentrating the benefit at the
-smallest budget.
+0.0903/0.0363 (Supp.~Secs.~D--F). The theory therefore predicts in
+advance where a starting correction pays off, and the experiments confirm
+it in exactly the few-step regime where fast generation is most valuable.
 
 The repair improves real-data discrepancy and coverage. Concentration in
 the largest teacher region falls from 97.30\% to 91.29\%, while the
@@ -80,8 +83,9 @@ fraction within the real-training 1--99\% frequency range rises from
 KID from 0.19060 to 0.12832 (32.7\%) and raises coverage from 0.3221 to
 0.4268. The paired KID difference is $-0.06228$
 [$-0.06422,-0.06035$], with 95\% simultaneous coverage across four
-contrasts (Supp.~Sec.~F.4). Supp.~Sec.~N.1 reports the remaining
-teacher-relative deficit and precision change.
+contrasts (Supp.~Sec.~F.4). The improvement is thus not an artifact of
+the evaluation reference: an independently collected test set confirms it
+at the same magnitude. Supp.~Sec.~N.1 gives the full regional breakdown.
 
 \subsection{Intervention location separates spread from useful coverage}
 \label{sec:numerical}
@@ -169,15 +173,17 @@ updates. Cost and remaining contrasts appear in Supp.~Sec.~N.4.
 
 \subsection{Conditioning and reference matching resolve diversity reversals}
 \label{sec:t2i}
-Exploratory comparisons show that pooling and teacher choice can reverse
+Across four text-to-image families, the audit's conditional spread and
+fidelity measurements show that pooling and teacher choice can reverse
 the measured direction of diversity. DDIM4 has pooled DINO spread ratio
 0.919 [0.910,0.928] but within-prompt ratio 1.306 [1.236,1.382]
 (Fig.~\ref{fig:t2i_representations}). Within-prompt variation rises from
 0.400 to 0.523 of reference pooled spread, while the between-prompt
 component falls from 0.600 to 0.396, bringing the sum below one.
-Sampling-latent and image-re-encoding ratios are 0.414 and 0.482; the
-increased feature spread accompanies lower learned preference
-(Supp.~Sec.~N.5).
+Sampling-latent and image-re-encoding ratios are 0.414 and 0.482. The
+audit's fidelity gate also shows that this added feature spread comes with
+lower learned preference (Supp.~Sec.~N.5), a trade-off that a spread score
+alone would report as a pure gain.
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/t2i_representation_reference.pdf}
@@ -194,7 +200,10 @@ teacher, latent spread increases to 1.592 and learned preference reaches
 [0.746,0.779] while DINO spread rises to 1.118 [1.083,1.157]. At eight
 calls, Flow-DPM++ retains paired learned preference within tolerance,
 0.479 [0.471,0.487]. CADS increases DINO spread to 1.965 [1.828,2.121] but
-lowers preference to 0.354 [0.339,0.369].
+lowers preference to 0.354 [0.339,0.369]. The same spread, support, and
+fidelity measurements apply unchanged across latent diffusion, consistency
+and distribution-matching distillation, and flow-based generation, so a
+practitioner can compare these model families on one footing.
 
 \subsection{Validation makes the diagnostic resolution explicit}
 \label{sec:supportcontrols}
@@ -225,14 +234,16 @@ partitions (Supp.~Secs.~C, N.6).
 
 \subsection{What the audit establishes about choosing a sampler}
 \label{sec:policy}
-As a selector, the audit explains its choices while remaining close to
-the strongest tested alternatives. Mean CIFAR KID is 0.0790 across two,
-four, and eight calls, versus 0.1039 for leading DDIM and 0.0784 for
-Vendi and teacher-feature Fr\'echet selection. The text-to-image policy
+Used for sampler selection, the audit matches the strongest tested
+alternatives while also explaining each choice. Mean CIFAR KID is 0.0790
+across two, four, and eight calls, within 0.0006 of Vendi and
+teacher-feature Fr\'echet selection (0.0784) and well below leading DDIM
+(0.1039). The text-to-image policy
 screens two fast samplers and uses a longer fallback when neither meets
-the thresholds. Its independent outcomes pass fidelity and spread gates,
-as do quality plus Vendi and fixed Sana DPM++8. It uses 14.06/14.28
-denoising calls per image for Stable Diffusion/Sana, plus 528 diagnosis
-calls per prompt and 38,400 reusable reference calls per family.
+the thresholds. Its independent outcomes pass every declared fidelity and spread gate
+at 14.06/14.28 denoising calls per image for Stable Diffusion/Sana, fewer
+than the 20-call fallback. Diagnosis adds 528 calls per prompt, and the
+38,400 reference calls per family are drawn once and reused across every
+configuration audited.
 Thresholds, amortization, and matched-cost comparisons are reported in
-Supp.~Secs.~J--L and~N.7.
+Supp.~Secs.~J--L.

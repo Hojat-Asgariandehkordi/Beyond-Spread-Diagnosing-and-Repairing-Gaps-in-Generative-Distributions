@@ -235,3 +235,13 @@ classifier consensus and feature precision. For CIFAR-10, $I$ is the
 identity in 3,072-dimensional pixel space, $\widehat C$ uses 128
 teacher-fit pixel components and an isotropic residual, and the two-call
 grid starts at $t_0=500$.
+
+\paragraph{Using the audit in practice.}
+A practitioner declares the smallest regional loss worth acting on, uses
+\cref{eq:planning} to choose the sample size, and draws the reference
+pools once. Each candidate configuration then needs only fresh samples and
+the frozen regions, so auditing a new sampler, guidance scale, distilled
+model, or fine-tuned checkpoint reuses everything else. The output is a
+short list of certified regional changes with their sizes, a spread and
+support summary, and, when a deficit is found, the single controlled
+change to test next.

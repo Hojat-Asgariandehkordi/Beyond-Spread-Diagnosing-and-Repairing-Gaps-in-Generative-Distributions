@@ -43,6 +43,17 @@ interventions, and four text-to-image families across pixel, latent,
 DINOv2, and CLIP representations. Reusable reference pools amortize
 diagnosis across configurations.
 
+These results matter in practice because every decision about how to
+generate images faster or better changes the output distribution, and a
+pooled spread score cannot say what changed. The audit replaces that score
+with a statement a practitioner can act on: which region lost probability,
+by how much, and which single change restores it. It needs only samples,
+so it applies to proprietary and open models alike. Its cost is known
+before any experiment: for a complete loss, the certificate's sample
+requirement is a closed-form function of the region's mass and the
+comparison family (Corollary~1). Both
+repairs it identified come at no additional cost at inference time.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{../figures/toy_example.pdf}
@@ -67,7 +78,8 @@ audit separating regional mass, conditional spread, and reference
 support, with finite-sample regional certificates and explicit sample
 planning. Second, we confirm two diagnosis-guided repairs at matched
 inference or training budgets, including transfer to an independent
-CIFAR-10 reference. Third, Gaussian analysis separates initialization
-from integration error and predicts the low-budget correction, while
+CIFAR-10 reference. Third, building on exact Gaussian analyses, we separate initialization
+from integration error and predict the low-budget correction before
+testing it, while
 comparisons across four text-to-image families resolve diversity
 reversals caused by pooling, representation, and teacher choice.
