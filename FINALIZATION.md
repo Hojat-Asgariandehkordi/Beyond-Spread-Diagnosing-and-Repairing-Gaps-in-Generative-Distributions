@@ -129,6 +129,14 @@ duplicate Table 13 values (v0 reviewer); confirm recovered figure intervals; LLM
   implementations do not start from the last timestep; PriorGrad (ICLR 2022) uses a data-statistics prior in training and sampling.
 - Title reviewed and kept: it states the thesis (beyond pooled spread; diagnose and repair regional gaps).
 
+## Author comments round (2026-11-13, after finalization; UNSCORED, last review score is historical)
+- Removed Fig. 2 (toy figure); the toy example text stays in the introduction (scripts/fig_toy.py kept as the source of 0.133 and n >= 34).
+- Table 1 transposed: outcomes are columns, Control / Repair / Delta [l, u] are rows, one block per study; still one column.
+- Fig. 3 (now Fig. 2): panels (a) and (b) side by side in one column-width row with one shared legend.
+- Fig. 8 (detection power) moved to the supplement as Supp. Fig. 1; the main text keeps its numbers and cites Supp. Fig. 1.
+- Fig. 1 scaled to 0.86 of the text width.
+- Effect: body now ends on p. 10 (about 9.5 pages). No numbers changed; compile clean; main figures now Fig. 1-6.
+
 ## Material unresolved items
 - Per-arm intervals recovered from draft figure geometry (35/35 printed values agree): need analysis output.
 - Page limit: body ~9.3 pages (expanded draft).
