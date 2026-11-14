@@ -15,52 +15,40 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-A fast image generator can match overall variation while losing an entire
-region of the image distribution. We introduce an audit that fixes a
-reference, measures changes in regional probability and within-region
-variation, and tests whether targeted interventions improve the intended
-outcome on fresh samples. A finite-sample bound certifies when a regional loss
-exceeds a declared magnitude. On a fixed natural-image model,
-changing the covariance of the starting noise lowers a feature-based
-distribution discrepancy by 32\% at two denoising calls per image and
-raises coverage of real-image feature neighborhoods from 20.6\% to 28.8\%.
-In a handwritten-digit experiment, ordinary training corrects a digit
-overshoot at the same update budget, reducing mean digit-frequency error
-by 59\% across three training seeds. Including images rejected by the
-digit classifiers, the discrepancy across the full set of outcomes falls
-by 42\%. In text-to-image generation, the same audit explains how pooled
-variation can fall while variation within individual prompts rises.
+Two image generators can produce equally varied images while one of them
+has lost an entire part of the image distribution. We introduce an audit
+that compares a generator with a fixed set of reference images. It
+measures how much probability each part of the image space gains or
+loses, how varied the images within each part are, and whether a
+targeted change improves the intended outcome on fresh images. The audit
+also states in advance how large a loss must be to count and how many
+images are needed to detect it. On CIFAR-10 with a two-step sampler,
+changing only the covariance of the starting noise lowers the distance
+to real images by 32\%. On MNIST, ordinary training corrects a digit that
+targeted training had overshot, reducing the mean error in digit
+frequencies by 59\% at the same training budget. In text-to-image
+generation, the audit explains how variation pooled across prompts can
+fall while variation within each prompt rises.
 \end{abstract}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth,pagebox=cropbox]{../figures/pipeline_overview.pdf}
-\caption{Reference-calibrated diagnosis and repair.
-(A) Reference and generated images use the same feature map $\phi$.
-Fit regions on $R_{\rm fit}$, calibrate the support threshold on
-$R_{\rm cal}$, and apply the frozen regions to the reference evaluation
-pool and candidate samples. (B) The diagnostics measure regional mass,
-within-region spread, and departure from reference support. In region
-$j$, $p_j$ and $q_j$ are reference and candidate masses. The depletion
-criterion is $q_j^+/p_j^-<0.5$ at the illustrated threshold, where $+$
-and $-$ denote upper and lower confidence bounds. Contraction requires
-the spread interval to lie below 0.9. (C) Compare the targeted change
-with its control on independent outcomes and record fidelity and cost.
-Images and point clouds are illustrative.}
+\caption{Fixed-reference diagnosis and repair. (A) Reference and candidate
+images share the feature map $\phi$; regions are fit on $R_{\rm fit}$, the
+support threshold is calibrated on $R_{\rm cal}$, and both are frozen before
+evaluation. (B) Three diagnostics: regional mass, within-region spread, and
+reference support. (C) A diagnosis motivates one specified change, tested
+against its control on independent outcomes. Images and point clouds are
+illustrative.}
 \label{fig:pipeline}
 \end{figure*}
 
 \input{introduction}
 \input{related}
 \input{method}
-\input{support_experiments}
-\section{Controlled repairs and interpretable comparisons}
-\label{sec:experiments}
-\input{repair_summary}
-\input{cifar_experiments}
-\input{mnist_experiments}
-\input{t2i_experiments}
-\input{policy_summary}
+\input{experiments}
+\input{results}
 \input{conclusion}
 \label{audit:lastbodypage}
 \clearpage

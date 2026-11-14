@@ -1,20 +1,35 @@
-\section{Discussion and conclusion}
-\label{sec:discussion}
-A distribution repair needs a target that survives changes in how
-samples are pooled and compared. Fixing the reference and a meaningful
-effect size makes regional probability loss testable. Conditional spread
-and fidelity then show whether changes in variation serve that target.
-The crossed probes illustrate the distinction: longer sampling improves
-some short-sampler deficits, while the missing digit persists across
-adequate samplers when training withholds it.
+\section{Conclusion}
+\label{sec:conclusion}
+We asked which regions of an image distribution a generator loses or
+gains, how variation within a region or prompt changes when fidelity is
+measured separately, and which controlled interventions repair the
+diagnosed deficit. A distribution repair needs a target that survives
+changes in how samples are pooled and compared. Fixing the reference and
+a meaningful effect size makes regional probability loss testable, and
+the finite-sample bounds state in advance how many samples a given
+region and comparison family require. Conditional spread and fidelity
+then show whether changes in variation serve that target. In
+text-to-image generation, pooled spread fell while within-prompt spread
+rose, and changing to a training-matched teacher reversed the measured
+direction for DMD2.
 
 The two controlled tests establish partial repairs at matched budgets.
 Starting-covariance matching improves two-call agreement with real data
 on one pretrained model, even though most teacher-defined regions remain
 depleted. Ordinary continuation improves the full distribution of digit
 classifier outcomes across three paired seeds, including rejection in
-the measure. Its rejection rate still exceeds that of real data. A second
-pretrained checkpoint would test transfer of the initialization result,
-and independent labels for generated digits would test whether the
-classifier findings track human judgments. The matched-cost prompt
-shuffle leaves the advantage of per-prompt selection unresolved.
+the measure. The crossed probes illustrate why the reference matters:
+longer sampling improves some short-sampler deficits, while the missing
+digit persists across adequate samplers when training withholds it.
+
+These conclusions have limits. The initialization result is shown on one
+pretrained CIFAR-10 checkpoint, and the digit findings rest on classifier
+labels whose rejection rate on generated images still exceeds that of real
+data. The spread intervals are approximate and fall outside the exact
+error guarantee, and the matched-cost prompt shuffle leaves the advantage
+of per-prompt selection unresolved. A second pretrained checkpoint would
+test transfer of the initialization result, and independent labels for
+generated digits would test whether the classifier findings track human
+judgments. Extending the certificates to prompt mixtures with an explicit
+sampling model would let the audit make population-level claims about
+text-to-image generators.

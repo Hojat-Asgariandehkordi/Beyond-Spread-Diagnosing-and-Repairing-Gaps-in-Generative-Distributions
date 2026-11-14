@@ -13,6 +13,12 @@ from matplotlib.ticker import FixedLocator, NullLocator, FuncFormatter
 import style as S
 import data as D
 
+# Display names match the manuscript text (Sec. 3.6 / 4.3).
+NAME = {"Keep targeting": "Continued targeting", "Ordinary data": "Ordinary continuation",
+        "Covariance only": "Covariance start"}
+def nm(s):
+    return NAME.get(s, s)
+
 S.apply()
 OUT = os.path.join(os.path.dirname(__file__), "..", "figures")
 
@@ -47,7 +53,7 @@ def fig_overview():
          "Mean class-mass error (%, lower is better)", "\N{MINUS SIGN}58.7%", (0, 3.2), [0, 1, 2, 3], "{:.2f}"),
     ]
     for ax, rows, cols, mks, title, xl, eff, xlim, ticks, fmt in specs:
-        labels = [r[0] for r in rows]
+        labels = [nm(r[0]) for r in rows]
         rows_axis(ax, labels)
         hilite(ax, 1)
         for i, (lab, est, lo, hi) in enumerate(rows):
@@ -122,7 +128,7 @@ def fig_init():
 
     ax = fig.add_subplot(gs[1])
     rows = D.FIG4B_KID
-    rows_axis(ax, [r[0] for r in rows])
+    rows_axis(ax, [nm(r[0]) for r in rows])
     style_b = {"Leading DDIM": (S.CONTROL, "o", True), "Trailing DDIM": (S.CONTROL, "o", False),
                "DPM++ / UniPC": (S.ALT, "s", True), "Full moments": (S.REPAIR, "D", False),
                "Covariance only": (S.REPAIR, "D", True)}
@@ -201,8 +207,8 @@ def fig_mnist():
     keep, ordi = np.array(D.FIG7_GAP["Keep targeting"]), np.array(D.FIG7_GAP["Ordinary data"])
     for xi, a, b in zip(x, keep, ordi):
         ax.plot([xi, xi], [a, b], color=S.GRID, lw=1.6, zorder=1, solid_capstyle="round")
-    ax.plot(x, keep, "s", color=S.ADVERSE, mec="white", mew=0.5, ms=4.6, label="Keep targeting", zorder=3)
-    ax.plot(x, ordi, "D", color=S.REPAIR, mec="white", mew=0.5, ms=4.2, label="Ordinary data", zorder=3)
+    ax.plot(x, keep, "s", color=S.ADVERSE, mec="white", mew=0.5, ms=4.6, label="Continued targeting", zorder=3)
+    ax.plot(x, ordi, "D", color=S.REPAIR, mec="white", mew=0.5, ms=4.2, label="Ordinary continuation", zorder=3)
     ax.axhline(0, color=S.INK2, lw=0.7, zorder=2)
     ax.axvline((x[-2] + x[-1]) / 2, color=S.MUTED, lw=0.6, ls=":", zorder=1)
     ax.set_xticks(x)
@@ -228,7 +234,7 @@ def fig_mnist():
     ax.text(-0.1, ma + 1.2, f"mean {ma:.1f}", ha="right", va="center", fontsize=6.8, color=S.INK2)
     ax.text(1.1, mb, f"mean {mb:.1f}", ha="left", va="center", fontsize=6.8, color=S.INK2)
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(["Keep targeting", "Ordinary data"])
+    ax.set_xticklabels(["Continued targeting", "Ordinary continuation"])
     ax.tick_params(axis="x", length=0)
     ax.grid(axis="x", visible=False)
     ax.set_xlim(-0.55, 1.55)

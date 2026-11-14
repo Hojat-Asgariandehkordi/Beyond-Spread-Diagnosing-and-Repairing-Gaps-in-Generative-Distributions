@@ -1,0 +1,112 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Datasets}
+\label{sec:datasets}
+We validate the audit's resolution on controlled deletions from Gaussian
+mixtures and from cached image features, where the removed region and
+its mass are known. The image experiments use four settings.
+CIFAR-10 uses a public pretrained DDPM~\cite{krizhevsky2009cifar,ho2020ddpm}.
+A 20,000-image DDIM100 teacher supplies 5,000/5,000/10,000 disjoint
+fitting/calibration/evaluation images. CIFAR-10.1v6~\cite{recht2018cifar10}
+provides a second, separately collected real reference of 2,000 images,
+and an independently pretrained variance-preserving EDM
+model~\cite{karras2022edm} provides a second checkpoint for solver
+comparisons. For CIFAR-10 semantic regions, classifier consensus defines ten
+accepted classes plus rejection; real-image consensus acceptance is
+90.75\%, with 98.75\% accuracy among accepted images.
+
+In MNIST~\cite{lecun1998mnist}, withholding digit~3 from training creates
+a known data-relative deficit. Two calibrated classifiers define consensus
+digit regions and rejection; accepted real-image accuracy is 99.916\%, and
+rejection remains in every probability denominator. For text-to-image
+generation, we compare SD1.5, native LCM-LoRA, one-step DMD2, and Sana-600M
+\cite{rombach2022ldm,luo2023lcmlora,yin2024dmd2,xie2025sana} on 128 held-out
+PartiPrompts~\cite{yu2022parti}. Disjoint pools supply 32 representation-fit,
+256 calibration, and 48 development prompts. References are DDIM50 at
+classifier-free guidance (CFG) 7.5 and Flow-DPM++50; DMD2 also uses its
+training-matched CFG1.75 teacher. These are generator-relative
+measurements; prompts supply no real-image coverage target.
+
+\subsection{Experimental settings}
+\label{sec:settings}
+On CIFAR-10, the original 22-arm study used a 2,048-image pilot and 10,000
+fresh images per arm. An ablation on its paired seeds motivated a separate
+six-arm confirmation on five fresh paired panels of 2,000 images from the
+same checkpoint. Uncertainty is over generated panels and conditions on
+the fixed real-data reference (Supp.~Sec.~F.3). At four and eight calls,
+matched-grid controls hold trailing timesteps fixed, and covariance-aware
+sampling is charged for both forward and Jacobian--vector-product calls.
+All eight EDM arms share 2,048 noise inputs; Heun uses $2K-1$ calls for
+$K$ integration steps.
+
+The original MNIST comparison spans three training seeds, five training
+states, and eleven samplers (165 evaluations); its paired restoration
+contrast uses the frozen three-comparison adjustment. The follow-up
+compares 8,000 ordinary-data and 8,000 continued-targeting updates from
+identical model, optimizer, EMA, and random states. Each arm receives
+16,000 diagnosis and 2,000 independent outcome samples. The crossed
+probes combine two short samplers and three resolved probes with five MNIST
+training states and three seeds (Supp.~Secs.~H.3--H.4). Each short sampler
+is compared with a 25-call reference from the same checkpoint, and a
+training test also requires the same real-data-relative deficit to persist
+under all three resolved probes, each passing its fidelity gates. The
+recommendations were frozen before outcome generation. The CIFAR-10
+semantic check uses one adaptation seed and 3,000 matched updates.
+
+For text-to-image generation, each prompt receives eight diagnosis and 16
+separate outcome seeds. The complete matrix retains 29 SD and seven Sana
+configurations, including step and guidance changes, stochastic sampling,
+conditioning noise, and first-base-step LCM. Native schedules and
+checkpoint conversions are checked against released implementations.
+Prompt-level resampling keeps each prompt's candidate/reference pairing
+intact and treats its seeds as within-prompt observations.
+
+\subsection{Baselines}
+\label{sec:baselines}
+On CIFAR-10, the covariance start is compared with the standard start
+under leading and trailing DDIM grids, and with DPM++ and UniPC at the
+same call budget~\cite{song2021ddim,lu2022dpmpp,zhao2023unipc}. Two
+alternative interventions isolate where the change acts: full-moment
+initialization, which also matches the mean, and output covariance
+restoration, which restores the covariance of the generated images.
+We also test covariance-aware sampling~\cite{schioppa2026covariance}. On the EDM checkpoint we compare Euler and Heun integration.
+On MNIST, ordinary continuation (training on the full data) is compared
+with continued targeting (keeping the restored digit's doubled training weight)
+from the same parent, with the full-data model as the fidelity control;
+the CIFAR-10 semantic check adds event-ratio weighting. For regional
+detection, we compare the depletion certificate with the
+number-of-statistically-different-bins (NDB) test~\cite{richardson2018ndb}
+and two projected rules. For sampler selection, we compare with leading
+DDIM, Vendi, and teacher-feature Fr\'echet selection on CIFAR-10, and with
+quality plus Vendi, fixed Sana DPM++8, a 20-call fallback, and
+CADS~\cite{sadat2024cads} in text-to-image generation. We do not use
+precision, recall, or Vendi as alternatives to the certificate, because
+they do not return a regional effect-size decision; they serve as fidelity
+and selection controls instead.
+
+\subsection{Evaluation metrics}
+\label{sec:metrics}
+KID compares distributions in Inception feature
+space~\cite{binkowski2018demystifying}, and we report it $\times10^3$ in
+figures. DINO coverage is the fraction of real reference neighborhoods
+reached by generated features~\cite{naeem2020density}, and precision is
+its fidelity counterpart. Class-mass error averages the absolute
+real-to-generated probability differences across the ten accepted digit
+regions, and total variation is half the sum of the eleven absolute gaps
+when rejection is included. Spread is the trace ratio of
+\cref{eq:spread}. In text-to-image generation, PickScore~\cite{kirstain2023pickapic}
+and ImageReward measure learned preference. A frequency-range check
+counts images within the real-training 1--99\% frequency range
+(Supp.~Sec.~G.1).
+
+We write a paired difference as $\Delta\,[\ell,u]$, where $\Delta$ is the
+mean difference between repair and control and $[\ell,u]$ its interval.
+CIFAR-10 intervals are Student-$t$ over five generated panels, with
+nominal 95\% simultaneous coverage across five prespecified contrasts
+under the panel-effect approximation. MNIST intervals are 97.5\% paired
+Student-$t$ intervals over three training seeds, one for each of two
+prespecified outcomes. Intervals labelled ordinary or descriptive are
+unadjusted paired 95\% intervals. Text-to-image intervals resample whole
+prompts, and detection rates use exact binomial intervals. All intervals
+condition on the fixed evaluation references.

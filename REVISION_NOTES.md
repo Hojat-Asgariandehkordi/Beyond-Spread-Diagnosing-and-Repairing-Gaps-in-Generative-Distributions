@@ -59,3 +59,30 @@ lettering still typeset in Times.
 3. Supplement figures (24) are unchanged; they already use a Times clone but the older colour scheme.
    They can be restyled the same way in a second pass.
 4. BioRender credits (see above).
+
+---
+
+# Text pass (skill checklist applied), 2026-11-13
+
+All numbers retained: a script compared every number token in the old body with the new body.
+The only numbers no longer present are three abstract roundings (20.6, 28.8, 42), whose
+full-precision values remain in the body (coverage 0.206 → 0.288; 41.6%).
+
+| Checklist item | Change |
+|---|---|
+| Abstract | Plain language, one message, two headline numbers (32%, 59%); no undefined terms. |
+| Introduction | Problem → limitation → idea (cites Fig. 1 first, fixing figure order) → evidence → toy example (bound 0.133 re-computed: 0.1328) → "First/Second/Third" contributions → organization paragraph. |
+| Related work | Already two connected paragraphs; unchanged. |
+| Method (Sec. 3) | Six subsections: setting; representation & regions with **Lemma 1** (total covariance, proof); mass certificate with **Proposition 1** (simultaneous ratio intervals, proof) and **Corollary 1** (sample-size bound, proof); conditional spread; reference support; diagnosis → intervention with **Proposition 2** (Gaussian initialization/integration factorization, derivation in Supp. D–F, short proof of the refinement inequality). Covariance-start theory moved here from the CIFAR results. All constants collected in 3.7 Implementation details. Symbols defined before use. |
+| Experiments (Sec. 4) | New: 4.1 Datasets, 4.2 Experimental settings, 4.3 Baselines (with a methodological reason why precision/recall/Vendi are controls, not alternatives), 4.4 Evaluation metrics (defines the Δ [ℓ, u] notation and every interval type). |
+| Results (Sec. 5) | Leads with the two repairs (Tab. 1), then CIFAR, intervention location, MNIST, crossed probes, text-to-image, validation (moved out of the method), sampler choice. Figures and table are cited in numerical order. |
+| Conclusion | "Discussion and conclusion" merged into one formal Conclusion that answers the intro's three questions, then limitations and future directions. |
+| Tables | Tab. 1 one column, results only, short caption; definitions moved to text. |
+| Captions | All shortened to "what is shown + takeaway"; interval types and settings moved to Sec. 4.4/5. No bold. |
+| Names | "covariance start" / "standard start", "ordinary continuation" / "continued targeting" defined in text and used in figure labels. |
+| LLM statement | Updated: adds Anthropic Claude for this revision; BioRender limited to an earlier Fig. 1. Check against the CVPR 2027 policy. |
+
+Removed files (content moved): `cifar_experiments`, `mnist_experiments`, `t2i_experiments`,
+`support_experiments`, `repair_summary`, `policy_summary`, `theory`. New: `experiments.tex`, `results.tex`.
+
+**Page count:** body now ends on page 10 (was 9; CVPR limit 8). Expanded working draft; compress on request.
