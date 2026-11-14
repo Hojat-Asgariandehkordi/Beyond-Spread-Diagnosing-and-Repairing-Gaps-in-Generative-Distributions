@@ -1,4 +1,4 @@
-\begin{thebibliography}{40}
+\begin{thebibliography}{42}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -59,6 +59,14 @@ Sang gil Lee, Heeseung Kim, Chaehun Shin, Xu Tan, Chang Liu, Qi Meng, Tao Qin,
 \newblock {PriorGrad}: Improving conditional denoising diffusion models with
   data-dependent adaptive prior.
 \newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[Heusel et~al.(2017)Heusel, Ramsauer, Unterthiner, Nessler, and
+  Hochreiter]{heusel2017gans}
+Martin Heusel, Hubert Ramsauer, Thomas Unterthiner, Bernhard Nessler, and Sepp
+  Hochreiter.
+\newblock {GANs} trained by a two time-scale update rule converge to a local
+  nash equilibrium.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
 
 \bibitem[Ho et~al.(2020)Ho, Jain, and Abbeel]{ho2020ddpm}
 Jonathan Ho, Ajay Jain, and Pieter Abbeel.
@@ -245,6 +253,15 @@ Enze Xie, Junsong Chen, Junyu Chen, Han Cai, Haotian Tang, Yujun Lin, Zhekai
 \newblock {SANA}: Efficient high-resolution text-to-image synthesis with linear
   diffusion transformers.
 \newblock In \emph{International Conference on Learning Representations}, 2025.
+
+\bibitem[Xu et~al.(2023)Xu, Liu, Wu, Tong, Li, Ding, Tang, and
+  Dong]{xu2023imagereward}
+Jiazheng Xu, Xiao Liu, Yuchen Wu, Yuxuan Tong, Qinkai Li, Ming Ding, Jie Tang,
+  and Yuxiao Dong.
+\newblock {ImageReward}: Learning and evaluating human preferences for
+  text-to-image generation.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pages
+  15903--15935, 2023.
 
 \bibitem[Yin et~al.(2024)Yin, Gharbi, Park, Zhang, Shechtman, Durand, and
   Freeman]{yin2024dmd2}

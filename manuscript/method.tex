@@ -37,8 +37,11 @@ of the images~\cite{oquab2024dinov2,radford2021clip}. Principal component
 analysis (PCA) fitted on $R_{\rm fit}$ gives a mean $m\in\mathbb R^d$,
 an orthonormal basis $U\in\mathbb R^{d\times k}$ of $k$ retained
 directions, and coordinates $z(x)=U^\top(\phi(x)-m)\in\mathbb R^k$.
-For feature regions, we scale each coordinate by its reference-fit
-standard deviation and fit $K$ $K$-means cells. The fixed assignment
+For feature regions, we scale each coordinate of $z$ by its reference-fit
+standard deviation and fit $K$ $K$-means cells to the scaled coordinates.
+The regions use these scaled coordinates, the spread ratio of
+\cref{eq:spread} uses $z$ itself, and the support score of
+\cref{eq:support} uses whitened coordinates. The fixed assignment
 $J(x)\in\{1,\ldots,K\}$ defines the regions $A_j=\{x:J(x)=j\}$, which
 partition $\mathcal X$.
 
@@ -53,7 +56,7 @@ $p_j=P(X\in A_j)$ and $q_{aj}=Q_a(X\in A_j)$. Under $P$, let $Y=\phi(X)$
 have mean $\mu$, and let $\mu_j$ and $\Sigma_j$ be its mean and covariance
 conditional on $X\in A_j$.
 
-\paragraph{Lemma 1 (total covariance).}
+\paragraph{Lemma 1 (law of total covariance).}
 \emph{For any partition $\{A_j\}$,}
 \begin{equation}
 \operatorname{Cov}_{P}(Y)
@@ -189,7 +192,12 @@ coverage, and cost on independent samples. Final-sample deficits can have
 several causes. These controls test the effect of one specified change.
 
 \paragraph{Why the starting covariance matters.}
-Consider a centered clean Gaussian coordinate $X_0$ with variance
+Common schedules with leading timestep spacing start sampling from a
+noise level that the standard Gaussian does not match~\cite{lin2024flawed},
+and data-dependent priors change the starting distribution through
+training~\cite{lee2022priorgrad}. We quantify the effect of the mismatch
+and test a training-free correction. Consider a centered clean Gaussian
+coordinate $X_0$ with variance
 $\lambda>0$. Variance-preserving noising gives
 $X_t=\sqrt{\bar\alpha_t}X_0+\sqrt{1-\bar\alpha_t}\,\epsilon$ at
 timestep $t$, with cumulative signal coefficient $\bar\alpha_t\in[0,1]$

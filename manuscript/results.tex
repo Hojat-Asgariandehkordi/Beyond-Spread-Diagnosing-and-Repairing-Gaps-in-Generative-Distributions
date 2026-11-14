@@ -48,9 +48,12 @@ coverage from 0.206 to 0.288 (Fig.~\ref{fig:cifar_initializer}). KID falls
 from 0.1858 to 0.1264, a paired difference of $-0.05938$
 [$-0.06138,-0.05739$]. Full-moment initialization has similar coverage
 (0.290) and higher KID (0.1405). DPM++ and UniPC coincide in this two-call
-comparison at KID 0.2225. In the original study's ablation on paired seeds,
-KID was 0.2054 for mean only, 0.1413 for full moments, and 0.1261 for
-covariance only, which motivated the separate confirmation.
+comparison at KID 0.2225. The audit located the deficit at initialization, and its frozen selector
+chose full-moment initialization (Sec.~\ref{sec:policy}). An ablation on
+the original paired seeds then isolated the active component, with KID
+0.2054 for mean only, 0.1413 for full moments, and 0.1261 for covariance
+only, and the separate six-arm study confirmed the covariance start on
+fresh samples.
 
 \begin{figure}[t]
 \centering
@@ -117,10 +120,11 @@ and KID use real data.}
 The EDM checkpoint gives a matched-call solver comparison
 (Fig.~\ref{fig:edm_solver_audit}). At 15 calls, Heun lowers KID from
 0.00876 to 0.00250 while coverage falls from 0.477 to 0.417. At 35 calls,
-it lowers KID from 0.00250 to 0.000413 with coverage 0.501 for both
+it lowers KID from Euler's 0.00250 to 0.000413 with coverage 0.501 for both
 solvers. At three and seven calls, its fewer, larger steps give worse KID.
-At seven calls, Heun achieves DINO precision of 0.906, while 24.7\% of its
-images fall within the real-training frequency range. This mismatch shows
+At seven calls, Heun achieves DINO precision of 0.906, while only 24.7\% of its
+images fall within the real-training frequency range, the same fraction
+as the two-call covariance start by coincidence. This mismatch shows
 the value of the complementary frequency check (Supp.~Sec.~G.1).
 
 \begin{figure}[t]
@@ -218,9 +222,9 @@ ordinary restoration with the resolved sampler raises digit-3 mass to
 withholding. Both branches use the same training update budget. The mean
 class-mass error difference is $-0.00331$ [$-0.00683,0.00020$], an
 ordinary paired 95\% interval across three training seeds after averaging
-the two short settings within each seed. The crossed test identifies
-persistent depletion, while the independent outcomes show which repair
-objectives improve under the chosen comparison.
+the two short settings within each seed. Restoration thus repairs the
+persistent digit-3 depletion, while its additional class-mass benefit
+over the resolved sampler alone remains unresolved.
 
 \subsection{Conditioning and reference matching resolve diversity reversals}
 \label{sec:t2i}
@@ -317,8 +321,8 @@ repairs do not.
 \label{sec:policy}
 The original CIFAR selection rule averages KID 0.0790 across two, four,
 and eight calls, compared with 0.1039 for leading DDIM and 0.0784 for
-both Vendi and teacher-feature Fr\'echet selection. The audit thus matches the strongest
-selectors on this outcome while also explaining its choice: it chose
+both Vendi and teacher-feature Fr\'echet selection. The audit's selection thus comes within 0.0006 of the best selectors
+while also explaining its choice: it chose
 full-moment initialization at two calls because of the diagnosed starting
 deficit, and the later covariance-start result tests that intervention
 itself on fresh samples.

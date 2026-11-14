@@ -121,7 +121,7 @@ def fig_init():
     ax.set_ylim(-0.03, 1.08)
     ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_xlabel("Denoiser calls (log scale)", labelpad=1.5)
-    ax.set_ylabel("Variance ratio")
+    ax.set_ylabel("Pixel-PCA variance ratio")
     ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5), handlelength=2.2)
     ax.set_title("(a) Gaussian predictions and learned DDIM", pad=4)
     box = ax.get_position()

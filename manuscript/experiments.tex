@@ -1,5 +1,15 @@
 \section{Experiments}
 \label{sec:experiments}
+A few terms recur. An \emph{arm} is one generator configuration in a
+study, and a \emph{panel} is an independent set of generated images
+drawn with its own noise seeds. A \emph{probe} is a sampler used only to
+measure a checkpoint, and a \emph{resolved probe} is a longer sampler that
+passes its fidelity gates. A \emph{gate} is a pass/fail/unresolved check
+against a declared margin, such as the support gate of
+Sec.~\ref{sec:support} or a precision, alignment, or preference floor.
+A comparison is \emph{frozen} when it is fixed before outcome samples are
+drawn, and a decision is \emph{unresolved} when its interval overlaps the
+margin.
 
 \subsection{Datasets}
 \label{sec:datasets}
@@ -84,7 +94,7 @@ the CIFAR-10 semantic check adds event-ratio weighting. For regional
 detection, we compare the depletion certificate with the
 number-of-statistically-different-bins (NDB) test~\cite{richardson2018ndb}
 and two projected rules. For sampler selection, we compare with leading
-DDIM, Vendi, and teacher-feature Fr\'echet selection on CIFAR-10, and with
+DDIM, Vendi, and teacher-feature Fr\'echet selection~\cite{heusel2017gans} on CIFAR-10, and with
 quality plus Vendi, fixed Sana DPM++8, a 20-call fallback, and
 CADS~\cite{sadat2024cads} in text-to-image generation. We do not use
 precision, recall, or Vendi as alternatives to the certificate, because
@@ -102,7 +112,7 @@ real-to-generated probability differences across the ten accepted digit
 regions, and total variation is half the sum of the eleven absolute gaps
 when rejection is included. Spread is the trace ratio of
 \cref{eq:spread}. In text-to-image generation, PickScore~\cite{kirstain2023pickapic}
-and ImageReward measure learned preference. A frequency-range check
+and ImageReward~\cite{xu2023imagereward} measure learned preference. A frequency-range check
 counts images within the real-training 1--99\% frequency range
 (Supp.~Sec.~G.1).
 
