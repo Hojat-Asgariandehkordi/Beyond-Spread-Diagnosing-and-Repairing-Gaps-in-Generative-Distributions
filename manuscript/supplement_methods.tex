@@ -1,5 +1,33 @@
 \section{Statistical targets and guarantees}
 \label{supp:statistics}
+Algorithm~\ref{alg:audit} lists the complete audit and intervention test
+of main-paper Sec.~3; equation numbers refer to the main paper.
+
+\begin{algorithm}[t]
+\caption{Fixed-reference audit and intervention test (main paper, Sec.~3)}
+\label{alg:audit}
+\small
+\begin{algorithmic}[1]
+\Require reference pools $R_{\rm fit},R_{\rm cal},R_{\rm eval}\sim P$; candidate
+configuration $a$; representation $\phi$; declared $\rho$, $\pi_{\min}$, $\delta$,
+margins, $M$, $\alpha_{\rm occ}$
+\State Fit PCA $(m,U)$ and $K$-means regions $\{A_j\}$ on $\phi(R_{\rm fit})$
+\Comment{main paper, Sec.~3.2}
+\State Calibrate the support threshold $\tau$ on $S(R_{\rm cal})$, Eq.~(5) of the main paper
+\State Freeze $\phi$, $m$, $U$, $\{A_j\}$, $\tau$, and all decision rules
+\State Draw a diagnosis sample from $Q_a$; count regional hits for $R_{\rm eval}$ and $Q_a$
+\For{each eligible region $j$ ($p_j^-\geq\pi_{\min}$)}
+\State Certify depletion, retention, or unresolved by Eq.~(2)
+\State Estimate $r_{aj}$ by Eq.~(4); flag contraction or expansion
+\EndFor
+\State Evaluate the support gate on $Q_a(S>\tau)-P(S>\tau)$
+\State Locate the deficit with Eq.~(6); choose one change and its control
+\Comment{main paper, Sec.~3.6}
+\State Freeze the comparison; draw a fresh outcome sample at matched budget
+\State \Return targeted outcome, fidelity, support, and cost with intervals
+\end{algorithmic}
+\end{algorithm}
+
 
 \subsection{Fixed regions and independent evaluation}
 A region is a fixed measurable event for an image. A validated semantic

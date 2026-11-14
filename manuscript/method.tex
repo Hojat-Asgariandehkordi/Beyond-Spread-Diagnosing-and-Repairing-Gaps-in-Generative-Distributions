@@ -5,7 +5,7 @@ to a controlled intervention test. We first define the laws and pools
 it compares (Sec.~\ref{sec:setting}), then the regions and why pooled
 spread cannot replace them (Sec.~\ref{sec:regions}). Sections
 \ref{sec:mass}--\ref{sec:support} give the three diagnostics, and
-Sec.~\ref{sec:intervene} turns a diagnosis into an intervention test. Algorithm~\ref{alg:audit} lists the complete procedure.
+Sec.~\ref{sec:intervene} turns a diagnosis into an intervention test. Supp.~Algorithm~1 lists the complete procedure.
 
 \subsection{Setting and notation}
 \label{sec:setting}
@@ -242,31 +242,6 @@ noise, $I$ is the identity in pixel space, $\widehat C$ is an estimate of
 the clean covariance, and the square root is symmetric. We call this the
 \emph{covariance start} and the usual $X_{\rm start}=Z$ the
 \emph{standard start}. The covariance start adds no denoiser calls.
-
-\begin{algorithm}[t]
-\caption{Fixed-reference audit and intervention test}
-\label{alg:audit}
-\small
-\begin{algorithmic}[1]
-\Require reference pools $R_{\rm fit},R_{\rm cal},R_{\rm eval}\sim P$; candidate
-configuration $a$; representation $\phi$; declared $\rho$, $\pi_{\min}$, $\delta$,
-margins, $M$, $\alpha_{\rm occ}$
-\State Fit PCA $(m,U)$ and $K$-means regions $\{A_j\}$ on $\phi(R_{\rm fit})$
-\Comment{Sec.~\ref{sec:regions}}
-\State Calibrate the support threshold $\tau$ on $S(R_{\rm cal})$, \cref{eq:support}
-\State Freeze $\phi$, $m$, $U$, $\{A_j\}$, $\tau$, and all decision rules
-\State Draw a diagnosis sample from $Q_a$; count regional hits for $R_{\rm eval}$ and $Q_a$
-\For{each eligible region $j$ ($p_j^-\geq\pi_{\min}$)}
-\State Certify depletion, retention, or unresolved by \cref{eq:occupancy}
-\State Estimate $r_{aj}$ by \cref{eq:spread}; flag contraction or expansion
-\EndFor
-\State Evaluate the support gate on $Q_a(S>\tau)-P(S>\tau)$
-\State Locate the deficit with \cref{eq:decomp}; choose one change and its control
-\Comment{Sec.~\ref{sec:intervene}}
-\State Freeze the comparison; draw a fresh outcome sample at matched budget
-\State \Return targeted outcome, fidelity, support, and cost with intervals
-\end{algorithmic}
-\end{algorithm}
 
 \subsection{Implementation details}
 \label{sec:implementation}
