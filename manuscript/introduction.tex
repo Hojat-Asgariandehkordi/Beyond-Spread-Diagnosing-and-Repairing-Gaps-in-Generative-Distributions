@@ -49,6 +49,17 @@ measurements reveal that targeted restoration of a withheld digit
 overshoots, and an equal-update ordinary-data continuation lowers
 class-mass error by 58.7\% within the declared fidelity margins.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figures/toy_example.pdf}
+\caption{Spread cannot see a lost region, but a fixed-region certificate can.
+(a) Reference and candidate have equal mean and variance, yet region $A$
+holds half of $P$ and none of $Q$. (b) Upper bound on the mass ratio from
+Proposition~1 with zero candidate hits; it certifies depletion once it
+falls below $\rho=0.5$.}
+\label{fig:toy}
+\end{figure}
+
 A toy example shows why spread alone is not enough. Consider a reference
 with probabilities $(1/4,1/2,1/4)$ at feature values $(-2,0,2)$ and a
 candidate with equal mass at $-\sqrt{2}$ and $\sqrt{2}$. Both have mean
@@ -58,7 +69,7 @@ distribution give 50 reference hits and zero candidate hits, the
 one-region audit with family error budget $\alpha_{\rm occ}=0.025$ gives
 a 97.5\% simultaneous upper bound of 0.133 on the
 mass ratio. This certifies depletion at the declared threshold of 0.5
-(Sec.~\ref{sec:mass}). In this example, 34 draws
+(Fig.~\ref{fig:toy}, Sec.~\ref{sec:mass}). In this example, 34 draws
 per law already suffice.
 
 Our paper offers the following contributions. First, we introduce a

@@ -105,42 +105,43 @@ def fig_power():
 
 # --------------------------------------------------------------------------- Fig. 4
 def fig_init():
-    """(a) and (b) side by side in one column-width row; one legend for (a)'s series."""
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(S.COL_W, 1.72),
-                                 gridspec_kw=dict(width_ratios=[1.0, 1.0], wspace=1.15))
+    fig = plt.figure(figsize=(S.COL_W, 2.52))
+    gs = fig.add_gridspec(2, 1, height_ratios=[1.0, 1.05], hspace=0.78)
+    ax = fig.add_subplot(gs[0])
     st = {"Matched Gaussian": dict(color=S.REPAIR, ls="--", marker="s"),
           "Normal Gaussian": dict(color=S.CONTROL, ls=":", marker="o"),
           "Learned DDIM": dict(color=S.INK2, ls="-", marker="^")}
     for k, v in D.FIG4A.items():
-        ax.plot(D.FIG4A_CALLS, v, label=k, ms=3.4, mec="white", mew=0.5, lw=1.2, **st[k])
+        ax.plot(D.FIG4A_CALLS, v, label=k, ms=3.8, mec="white", mew=0.5, **st[k])
     ax.axhline(1.0, color=S.MUTED, lw=0.6, ls=(0, (1, 1.5)), zorder=1)
     ax.set_xscale("log", base=2)
     ax.xaxis.set_major_locator(FixedLocator(D.FIG4A_CALLS))
     ax.xaxis.set_minor_locator(NullLocator())
     ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{int(v)}"))
     ax.set_ylim(-0.03, 1.08)
-    ax.set_yticks([0, 0.5, 1.0])
-    ax.set_xlabel("Denoiser calls", labelpad=1.5)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_xlabel("Denoiser calls (log scale)", labelpad=1.5)
     ax.set_ylabel("Pixel-PCA variance ratio")
-    ax.set_title("(a) Gaussian prediction", pad=4, fontsize=7.5)
+    ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5), handlelength=2.2)
+    ax.set_title("(a) Gaussian predictions and learned DDIM", pad=4)
+    box = ax.get_position()
 
+    ax = fig.add_subplot(gs[1])
     rows = D.FIG4B_KID
-    rows_axis(bx, [nm(r[0]) for r in rows])
+    rows_axis(ax, [nm(r[0]) for r in rows])
     style_b = {"Leading DDIM": (S.CONTROL, "o", True), "Trailing DDIM": (S.CONTROL, "o", False),
                "DPM++ / UniPC": (S.ALT, "s", True), "Full moments": (S.REPAIR, "D", False),
                "Covariance only": (S.REPAIR, "D", True)}
-    hilite(bx, len(rows) - 1)
+    hilite(ax, len(rows) - 1)
     for i, (lab, est, lo, hi) in enumerate(rows):
         c, m, f = style_b[lab]
-        S.ci(bx, i, est, lo, hi, c, marker=m, filled=f, size=4.0)
-    bx.set_xlim(115, 235)
-    bx.xaxis.set_major_locator(FixedLocator([125, 175, 225]))
-    bx.set_xlabel("KID \N{MULTIPLICATION SIGN}10\N{SUPERSCRIPT THREE} \N{DOWNWARDS ARROW}", labelpad=1.5)
-    bx.set_title("(b) Two-call CIFAR-10", pad=4, fontsize=7.5)
-
-    h, l = ax.get_legend_handles_labels()
-    fig.legend(h, l, loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.20), handlelength=2.0,
-               columnspacing=0.9, fontsize=6.5)
+        S.ci(ax, i, est, lo, hi, c, marker=m, filled=f)
+        ax.annotate(f"{est:.1f}", (hi, i), xytext=(4, 0), textcoords="offset points", va="center",
+                    fontsize=6.8, color=S.INK2)
+    ax.set_xlim(115, 238)
+    ax.xaxis.set_major_locator(FixedLocator([125, 150, 175, 200, 225]))
+    ax.set_xlabel("KID \N{MULTIPLICATION SIGN}10\N{SUPERSCRIPT THREE} (lower is better)", labelpad=1.5)
+    ax.set_title("(b) Fresh two-call CIFAR-10 results", pad=4)
     save(fig, "initialization_repair")
 
 

@@ -17,25 +17,26 @@ paired 95\% interval. The largest teacher region has reference mass
 \begin{table}[t]
 \centering
 \footnotesize
-\setlength{\tabcolsep}{2.2pt}
+\setlength{\tabcolsep}{3.5pt}
 \caption{Matched-budget outcomes for the two repairs: control, repair,
 and paired difference $\Delta\,[\ell,u]$ (Sec.~\ref{sec:metrics}).}
 \label{tab:repair-summary}
-\begin{tabular}{@{}lccc@{}}
+\begin{tabular}{@{}lrrc@{}}
 \toprule
+Outcome & Control & Repair & $\Delta\,[\ell,u]$ \\
+\midrule
 \multicolumn{4}{@{}l}{\emph{CIFAR-10, two denoiser calls}} \\
- & KID $\downarrow$ & \begin{tabular}[b]{@{}c@{}}Real-data\\coverage $\uparrow$\end{tabular} & \begin{tabular}[b]{@{}c@{}}Largest teacher-\\region mass\end{tabular} \\
-\cmidrule(l){2-4}
-Control & 0.1858 & 0.206 & 0.9730 \\
-Repair & 0.1264 & 0.288 & 0.9129 \\
-$\Delta\,[\ell,u]$ & \begin{tabular}[c]{@{}c@{}}$-0.05938$\\ {\scriptsize$[-0.06138,-0.05739]$}\end{tabular} & \begin{tabular}[c]{@{}c@{}}$+0.0821$\\ {\scriptsize$[0.0672,0.0970]$}\end{tabular} & \textendash \\
+KID $\downarrow$ & 0.1858 & 0.1264 &
+\begin{tabular}[c]{@{}c@{}}$-0.05938$\\ $[-0.06138,-0.05739]$\end{tabular} \\
+\begin{tabular}[c]{@{}l@{}}Real-data\\coverage $\uparrow$\end{tabular} & 0.206 & 0.288 &
+\begin{tabular}[c]{@{}c@{}}$+0.0821$\\ $[0.0672,0.0970]$\end{tabular} \\
+\begin{tabular}[c]{@{}l@{}}Largest teacher-\\region mass\end{tabular} & 0.9730 & 0.9129 & \textendash \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{MNIST, 8,000 updates}} \\
- & \begin{tabular}[b]{@{}c@{}}Mean digit-\\mass error $\downarrow$\end{tabular} & \begin{tabular}[b]{@{}c@{}}Digit-3 mass\\error $\downarrow$\end{tabular} & \\
-\cmidrule(l){2-3}
-Control & 0.02177 & 0.06837 & \\
-Repair & 0.00900 & 0.00747 & \\
-$\Delta\,[\ell,u]$ & \begin{tabular}[c]{@{}c@{}}$-0.01277$\\ {\scriptsize$[-0.01878,-0.00676]$}\end{tabular} & \begin{tabular}[c]{@{}c@{}}$-0.06090$\\ {\scriptsize$[-0.11814,-0.00366]$}\end{tabular} & \\
+\begin{tabular}[c]{@{}l@{}}Mean digit-mass\\error $\downarrow$\end{tabular} & 0.02177 & 0.00900 &
+\begin{tabular}[c]{@{}c@{}}$-0.01277$\\ $[-0.01878,-0.00676]$\end{tabular} \\
+\begin{tabular}[c]{@{}l@{}}Digit-3 mass\\error $\downarrow$\end{tabular} & 0.06837 & 0.00747 &
+\begin{tabular}[c]{@{}c@{}}$-0.06090$\\ $[-0.11814,-0.00366]$\end{tabular} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -282,8 +283,16 @@ On cached image features, removing a 4.19\%-mass region is detected in
 The smallest Gaussian null yields 4/200 expansion flags from the
 approximate spread interval (Supp.~Sec.~C).
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{../figures/support_power_main.pdf}
+\caption{Regional certificates have measurable resolution: detection of
+a completely removed region versus sample size.}
+\label{fig:support-main-power}
+\end{figure}
+
 Rare regions require more samples, as \cref{eq:planning} predicts.
-Supp.~Fig.~1 shows detection versus sample size for complete removal, $M=10$,
+Figure~\ref{fig:support-main-power} uses complete removal, $M=10$,
 $\rho=0.5$, $\alpha_{\rm occ}=0.025$, and eligibility 0.001 (distinct from
 the default 0.01). Each point is 2,000 recorded trials with its saved exact
 95\% binomial interval, a secondary analysis at the full-audit error level.
