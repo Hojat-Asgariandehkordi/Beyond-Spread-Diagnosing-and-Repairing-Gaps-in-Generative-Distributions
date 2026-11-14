@@ -16,26 +16,34 @@ reference mass 0.3535, and its row reports pooled masses.
 
 \begin{table}[t]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{2.2pt}
 \caption{Matched-budget outcomes for the two repairs: control, repair,
-and paired difference $\Delta\,[\ell,u]$ (Sec.~\ref{sec:metrics}).}
+paired difference $\Delta$, and its interval $[\ell,u]$ (Sec.~\ref{sec:metrics}).}
 \label{tab:repair-summary}
-\begin{tabular}{@{}lccc@{}}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\sisetup{group-digits=false, retain-explicit-plus}
+\begin{tabular}{@{}l
+  S[table-format=+1.5]
+  S[table-format=+1.4]
+  S[table-format=1.4]@{}}
 \toprule
 \multicolumn{4}{@{}l}{\emph{CIFAR-10, two denoiser calls}} \\
- & KID $\downarrow$ & \begin{tabular}[b]{@{}c@{}}Real-data\\coverage $\uparrow$\end{tabular} & \begin{tabular}[b]{@{}c@{}}Largest teacher-\\region mass\end{tabular} \\
+\addlinespace[1pt]
+ & {KID $\downarrow$} & {Coverage $\uparrow$} & {Largest region} \\
 \cmidrule(l){2-4}
-Control & 0.1858 & 0.206 & 0.9730 \\
-Repair & 0.1264 & 0.288 & 0.9129 \\
-$\Delta\,[\ell,u]$ & \begin{tabular}[c]{@{}c@{}}$-0.05938$\\ {\scriptsize$[-0.06138,-0.05739]$}\end{tabular} & \begin{tabular}[c]{@{}c@{}}$+0.0821$\\ {\scriptsize$[0.0672,0.0970]$}\end{tabular} & \textendash \\
+Control      & 0.1858   & 0.206   & 0.9730 \\
+Repair       & 0.1264   & 0.288   & 0.9129 \\
+$\Delta$     & -0.05938 & +0.0821 & {--} \\
+$[\ell,u]$   & \multicolumn{1}{c}{\scriptsize$[-0.06138,-0.05739]$} & \multicolumn{1}{c}{\scriptsize$[0.0672,0.0970]$} & \\
 \midrule
 \multicolumn{4}{@{}l}{\emph{MNIST, 8,000 updates}} \\
- & \begin{tabular}[b]{@{}c@{}}Mean digit-\\mass error $\downarrow$\end{tabular} & \begin{tabular}[b]{@{}c@{}}Digit-3 mass\\error $\downarrow$\end{tabular} & \\
+\addlinespace[1pt]
+ & {Class-mass error $\downarrow$} & {Digit-3 error $\downarrow$} & \\
 \cmidrule(l){2-3}
-Control & 0.02177 & 0.06837 & \\
-Repair & 0.00900 & 0.00747 & \\
-$\Delta\,[\ell,u]$ & \begin{tabular}[c]{@{}c@{}}$-0.01277$\\ {\scriptsize$[-0.01878,-0.00676]$}\end{tabular} & \begin{tabular}[c]{@{}c@{}}$-0.06090$\\ {\scriptsize$[-0.11814,-0.00366]$}\end{tabular} & \\
+Control      & 0.02177  & 0.06837 & \\
+Repair       & 0.00900  & 0.00747 & \\
+$\Delta$     & -0.01277 & -0.06090 & \\
+$[\ell,u]$   & \multicolumn{1}{c}{\scriptsize$[-0.01878,-0.00676]$} & \multicolumn{1}{c}{\scriptsize$[-0.11814,-0.00366]$} & \\
 \bottomrule
 \end{tabular}
 \end{table}
