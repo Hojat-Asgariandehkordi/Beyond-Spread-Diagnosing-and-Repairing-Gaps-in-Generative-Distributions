@@ -67,17 +67,46 @@ priority = [P(help)·benefit − P(harm)·downside] / cost; benefit/downside 1�
 - v0 numerical notes: 41.6% is correct from unrounded means (14.61→8.537 = 41.57%); kept. Supp. Table 12 MAD/Acc.
   columns duplicate Table 13 F98 values per reviewer: flagged for authors, not edited.
 
+## Cycle 2 goals (final cycle; from v1 review)
+- **G1 Clarity** (v1 obj. 5): one terminology paragraph (arm, panel, probe/resolved probe, eligible, gate, frozen,
+  unresolved); state which coordinates enter K-means vs Eq. (4); Fig. 3a axis names the quantity; disambiguate
+  coincident values (24.7%, 0.00250). Success: terms defined once before use; no ambiguity flagged.
+- **G2 Accurate scoping** (v1 obj. 1, 3, 4): abstract/intro mark text-to-image as exploratory; crossed-probe
+  difference stated as unresolved; selector comparison stated exactly (0.0790 vs 0.0784); provenance of the
+  covariance-only form (ablation, then fresh confirmation); attribute starting-noise mismatch to prior work [lin2024flawed etc.].
+  Success: no claim exceeds its interval; prior work credited.
+- **G3 References/notation** (v1 checks): cite ImageReward, FID for Fréchet selection, Lemma 1 as the law of total covariance.
+- Deferred (needs new runs): second pretrained/distilled checkpoint; covariance start on EDM; head-to-head with
+  noise-prior methods; a case where the audit finds a deficit KID/NDB/Vendi miss and acting on it beats baseline choices.
+
 ## Action ledger
 - (setup) worktree, tag baseline-v0, frozen v0 PDFs (main db6dd188…, supp f361f11b…).
+- C1/G1 abstract (58.7% one rounding), intro novelty paragraph vs PRDC/Vendi/NDB, evidence paragraph (no extra cost),
+  lead sentences in 5.1/5.3/5.4/5.5/5.6, T2I exploratory, NDB complementary, Sec. 5.8 framing, conclusion DMD2 wording,
+  protocol terms defined in 4.2 (leading/trailing, 22 arms, six-arm, resolved probes), exact vs approximate in 4.4,
+  related work de-duplicated (inherits NDB regions; adds certificate, spread, support).
+- C2/G2 Fig. 2 = toy example (scripts/fig_toy.py; 0.1328 and n ≥ 34 computed); old overview plot dropped from main;
+  promoted 4/8-call boundary (Supp. Tab. 6: 92.6/37.8 vs 90.3/36.3 ×1e-3) and 9-setting robustness (Supp. C).
+- C3/G3 Algorithm 1 (Sec. 3, before 3.7).
+- Checks: number retention vs v0 (only '59' → 58.7 changed); new numbers traced; compile clean; pages rendered.
+- Frozen v1: commit c941889, main digest c6ae6e6546d44fcd.
 
 ## Review history
 | Snapshot | Commit | Digest (main) | Overall | Confidence | Notes |
 |---|---|---|---|---|---|
+| v1 | c941889 | c6ae6e6546d44fcd | **5/10** (O5 S6 E5 C4 P6) | medium | kept; remaining: audit's role in choosing covariance-only; practical significance (one checkpoint); abstract T2I overclaim; crossed-probe CI spans 0; density/undefined terms; missing ImageReward/FID cites; z scaling ambiguity |
 | v0 | 0110cb6 | db6dd18820aa376f | **4/10** (O5 S6 E4 C4 P6) | medium | baseline; objections: degenerate 2-call regime & no 4/8-call result; thin uncertainty; no sensitivity; T2I post hoc/overstated; undefined protocol terms; NDB null differs |
 
 ## Material unresolved items
 - Per-arm intervals recovered from draft figure geometry (35/35 printed values agree): need analysis output.
 - Page limit: body ~9.3 pages (expanded draft).
 
-## Compression map (to reach 8 pages later)
-(filled at the end)
+## Compression map (body ≈ 10.0 pages → 8)
+1. Move Sec. 5.5 (crossed probes) to the supplement, keeping two sentences in 5.4 (−0.45 p).
+2. Move the EDM solver paragraph and Fig. 5 to the supplement (−0.35 p).
+3. Shorten Sec. 4.2 to one paragraph; protocol details already in Supp. study map (−0.3 p).
+4. Move Proposition 2's statement into prose with the equation, proof sketch only (−0.2 p).
+5. Merge Sec. 5.8 into the conclusion as two sentences (−0.25 p).
+6. Move the CIFAR-10 semantic and frog-reference paragraphs of 5.4 to the supplement (−0.3 p).
+7. Fig. 8 (power) to half height or into the supplement with one sentence (−0.2 p).
+Total ≈ −2.05 pages.
