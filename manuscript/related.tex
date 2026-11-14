@@ -1,17 +1,16 @@
 \section{Related work}
 \label{sec:related}
-Precision and recall, density and coverage, and authenticity quantify
-different aspects of fidelity and coverage~\cite{kynkaanniemi2019improved,naeem2020density,alaa2022faithful}.
-Vendi measures kernel diversity~\cite{friedman2023vendi}. Scendi separates
-prompt-associated variation~\cite{ospanov2025scendi}, and Conditional
-Vendi and Rényi kernel entropy distinguish prompt and model variation
-and use these measurements to guide generation~\cite{jalali2026conditional}.
-The number-of-statistically-different-bins test compares occupancy in
-fixed $K$-means regions~\cite{richardson2018ndb}. Its equality test can
-detect a change in occupancy even when the data cannot certify a
-practically meaningful depletion. We specify the magnitude to certify,
-then use separate measurements of conditional spread and fidelity to
-design an intervention test.
+Global fidelity and coverage metrics~\cite{kynkaanniemi2019improved,naeem2020density,alaa2022faithful}
+and kernel diversity scores~\cite{friedman2023vendi,ospanov2025scendi}
+summarize a whole distribution or its prompt-conditioned variation, and
+Conditional Vendi and R\'enyi kernel entropy also use the prompt/model
+decomposition to guide generation~\cite{jalali2026conditional}. The
+closest regional analysis is the NDB test, which compares occupancy in
+fixed $K$-means regions~\cite{richardson2018ndb}. Our audit inherits its
+fixed regions but replaces the equality test with an effect-size
+certificate, whose resolution Corollary~1 states in advance, and adds
+conditional spread and a calibrated support gate so that each finding
+maps to a testable intervention.
 
 Few-step interventions can change the solver, the generator, or the
 conditions at sampling time. DDIM, DPM-Solver++, and UniPC change how a

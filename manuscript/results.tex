@@ -67,7 +67,12 @@ give standard-normal to matched aggregate variance ratios 0.216, 0.800,
 and 0.968 at two, four, and eight calls. Learned trajectories at four and
 eight calls correlate with the Gaussian prediction (Spearman 0.938 and
 0.894), but also exhibit mixing. The learned-model checks are in
-Supp.~Secs.~D--F.
+Supp.~Secs.~D--F. The same prediction marks the regime where the repair
+matters. At four and eight calls, where the initialization factor is
+already 0.800 and 0.968, full-moment initialization gives KID 0.0926 and
+0.0378 against 0.0903 and 0.0363 for leading DDIM (Supp.~Table~6). A
+starting correction is therefore the right intervention exactly where the
+audit and \cref{eq:gaussian} place the deficit, at the smallest budgets.
 
 The repair improves agreement with real data while leaving a large
 teacher-relative deficit. Nine of ten teacher-defined DINO regions
@@ -221,10 +226,11 @@ objectives improve under the chosen comparison.
 \label{sec:t2i}
 The direction of a diversity change depends on how spread is pooled and
 which teacher serves as reference, and the audit makes both choices
-explicit. DDIM4 has pooled DINO spread ratio 0.919 [0.910,0.928], yet within-prompt
+explicit. We treat these comparisons as exploratory: their intervals are
+descriptive, and the reversal analysis was specified after the outcomes
+were available. DDIM4 has pooled DINO spread ratio 0.919 [0.910,0.928], yet within-prompt
 spread ratio 1.306 [1.236,1.382] (Fig.~\ref{fig:t2i_representations}).
-A secondary descriptive decomposition, specified after access to these
-outcomes, explains the reversal. Within-prompt variation rises from
+A secondary descriptive decomposition explains the reversal. Within-prompt variation rises from
 0.400 to 0.523 of reference pooled spread, while the between-prompt
 contribution falls from 0.600 to 0.396. The larger decrease pulls the
 sum below one. The within-prompt ratio uses only the reference within
@@ -289,18 +295,33 @@ Detection for a 1\%-mass region rises from 3.25\% at $n=2{,}000$ to 99.9\%
 at $n=5{,}000$; increasing the family from 10 to 440 reduces the latter to
 73.95\%. With ten regions, 5,000 samples per set, and a true ratio of 0.5,
 NDB flags a change in 83.4\% of trials. The depletion test certifies a
-ratio below 0.5 in zero trials (Supp.~Sec.~C.5). Equality testing can
-therefore flag a regional change at sample sizes where an effect-size
-certificate remains unresolved. The choice depends on whether the decision
-requires evidence of any change or a lower bound on its magnitude.
+ratio below 0.5 in zero trials (Supp.~Sec.~C.5). The two tests answer
+different questions. At a true ratio of exactly $\rho$, NDB correctly
+detects that occupancy changed, while the certificate correctly declines
+to claim a ratio below $\rho$. Equality testing suits a decision that needs
+evidence of any change; the certificate suits a decision that needs a
+bound on its magnitude.
+
+The substantial deficits are also robust to the representation and the
+partition. Across DINO PCA dimensions $\{16,32,64\}$ and region counts
+$K\in\{5,10,20\}$ on five CIFAR-10 configurations (525 regions in one exact
+family), leading DDIM at four calls, output covariance at four calls,
+leading DDIM at two calls, and the covariance start at two calls are
+depleted in all nine settings. Every configuration is contracted in all
+nine and passes the support gate, and UniPC at four calls is depleted in
+seven, with both exceptions at five regions (Supp.~Sec.~C). Milder findings
+therefore depend on the partition, while the deficits that motivate the
+repairs do not.
 
 \subsection{What the audit establishes about choosing a sampler}
 \label{sec:policy}
 The original CIFAR selection rule averages KID 0.0790 across two, four,
 and eight calls, compared with 0.1039 for leading DDIM and 0.0784 for
-both Vendi and teacher-feature Fr\'echet selection. It chose full-moment
-initialization at two calls. The later covariance-start result tests the
-intervention itself on fresh samples.
+both Vendi and teacher-feature Fr\'echet selection. The audit thus matches the strongest
+selectors on this outcome while also explaining its choice: it chose
+full-moment initialization at two calls because of the diagnosed starting
+deficit, and the later covariance-start result tests that intervention
+itself on fresh samples.
 
 In text-to-image generation, a frozen rule screens two fast samplers
 and uses a longer fallback when neither meets the diagnosis thresholds.

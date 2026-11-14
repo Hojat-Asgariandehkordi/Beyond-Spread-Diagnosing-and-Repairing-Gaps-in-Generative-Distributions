@@ -30,9 +30,14 @@ measurements; prompts supply no real-image coverage target.
 
 \subsection{Experimental settings}
 \label{sec:settings}
-On CIFAR-10, the original 22-arm study used a 2,048-image pilot and 10,000
-fresh images per arm. An ablation on its paired seeds motivated a separate
-six-arm confirmation on five fresh paired panels of 2,000 images from the
+Diffusion samplers evaluate the denoiser on a grid of timesteps. Leading
+spacing places the grid at multiples of the schedule length divided by the
+number of calls, so the two-call grid starts at $t_0=500$; trailing
+spacing starts at the final timestep. On CIFAR-10, the original study
+compared 22 sampler and initialization configurations (arms) at two, four,
+and eight calls, using a 2,048-image pilot and 10,000 fresh images per arm. An ablation on its paired seeds motivated a separate
+six-arm confirmation (the arms of Fig.~\ref{fig:cifar_initializer}b) on
+five fresh paired panels of 2,000 images from the
 same checkpoint. Uncertainty is over generated panels and conditions on
 the fixed real-data reference (Supp.~Sec.~F.3). At four and eight calls,
 matched-grid controls hold trailing timesteps fixed, and covariance-aware
@@ -46,7 +51,8 @@ contrast uses the frozen three-comparison adjustment. The follow-up
 compares 8,000 ordinary-data and 8,000 continued-targeting updates from
 identical model, optimizer, EMA, and random states. Each arm receives
 16,000 diagnosis and 2,000 independent outcome samples. The crossed
-probes combine two short samplers and three resolved probes with five MNIST
+probes combine two short samplers and three resolved probes, longer
+samplers that pass their fidelity gates, with five MNIST
 training states and three seeds (Supp.~Secs.~H.3--H.4). Each short sampler
 is compared with a 25-call reference from the same checkpoint, and a
 training test also requires the same real-data-relative deficit to persist
@@ -109,4 +115,8 @@ Student-$t$ intervals over three training seeds, one for each of two
 prespecified outcomes. Intervals labelled ordinary or descriptive are
 unadjusted paired 95\% intervals. Text-to-image intervals resample whole
 prompts, and detection rates use exact binomial intervals. All intervals
-condition on the fixed evaluation references.
+condition on the fixed evaluation references. Proposition~1 and the
+support gate are exact finite-sample guarantees. The spread intervals and
+the Student-$t$ intervals over panels or seeds are approximate, and they
+capture sampling variability for a fixed checkpoint or training recipe,
+not variation across independently pretrained models.
